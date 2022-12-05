@@ -7,3 +7,11 @@ function laCajaDePandora(numero){
     }
     
     }
+
+    function gabriel() {
+        return {
+            nombre: 'Gabriel',
+            edad: 30,
+            nacionalidad: 'Argentino'
+        }
+    }
