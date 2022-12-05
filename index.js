@@ -1,12 +1,27 @@
-function laCajaDePandora(numero) {
-  // proximamente escribiremos codigo aqui
-  return n % 2 === 0 ? numero.toString(2) : numero.toString(16);
-}
 
-function andrea() {
+function laCajaDePandora(numero){
+    // proximamente escribiremos codigo aqui
+    if(numero % 2 === 0) {
+        return (numero >>> 0).toString(2);
+    } else {
+        return numero.toString(16);
+    }
+    
+    }
+
+    function gabriel() {
+        return {
+            nombre: 'Gabriel',
+            edad: 30,
+            nacionalidad: 'Argentino'
+        }
+    }
+    
+    function andrea() {
   return {
     nombre: "Andrea",
     edad: "24",
     nacionalidad: "Argentina",
   };
 }
+
