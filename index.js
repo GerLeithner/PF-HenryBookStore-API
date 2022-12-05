@@ -1,5 +1,6 @@
 
 
+
 function german() {
     return {
         name: "Germán",
@@ -7,7 +8,7 @@ function german() {
         nationality: "argentine"
     }
 }
-=======
+
 function laCajaDePandora(numero){
     // proximamente escribiremos codigo aqui
     if(numero % 2 === 0) {
@@ -25,3 +26,13 @@ function laCajaDePandora(numero){
             nacionalidad: 'Argentino'
         }
     }
+
+    function andrea() {
+  return {
+    nombre: "Andrea",
+    edad: "24",
+    nacionalidad: "Argentina",
+  };
+}
+
+
