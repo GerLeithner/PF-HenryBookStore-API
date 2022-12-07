@@ -2,8 +2,7 @@ const { DataTypes } = require('sequelize');
 
 // *id
 // *title
-// *release_date
-// *subject    
+// *release_date 
 // *publisher
 // description  
 // google_rating  
@@ -24,10 +23,6 @@ module.exports = (sequelize) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        subject: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
         publisher: {
             type: DataTypes.STRING,
             allowNull: false
@@ -41,6 +36,9 @@ module.exports = (sequelize) => {
         userRating: {
             type: DataTypes.INTEGER
         },
+        image: {
+            type: DataTypes.STRING
+        }
     }, 
     { timestamps: false });
 }
