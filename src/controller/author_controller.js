@@ -1,4 +1,4 @@
-const authors = [
+const CompleteAuthors = [
     {
         names: ["Gabriel García Márquez", "Pablo Neruda", "Mario Vargas Llosa", "José Martí", "Jorge Luis Borges", "Julio Cortázar", "Isabel Allende", "Jorge Amado", "Miguel Asturias", "Jorge Amado"],
         genre: "latin american"
@@ -23,7 +23,11 @@ const authors = [
         names: ["William Shakespeare", "Sylvia Plath", "Ted Hughes", "Dante Alighieri", "Maya Angelou", "Sappho", "Lord Byron", "Li Bai", "Langston Hughes", "Emily Dickinson"],
         genre: "poetry"
     } 
-]
+];
+
+authors = ["Gabriel García Márquez", "Pablo Neruda", "Julio Verne", "Philip K. Dick", "Margaret Atwood", "George Orwell", "Agatha Christie", "Sir Arthur Conan Doyle", "George R. R. Martin","William Shakespeare", "Sylvia Plath"];
+
+
 
 module.exports = {
     authors
