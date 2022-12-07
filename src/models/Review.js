@@ -14,11 +14,11 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       score: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       create_date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
     },

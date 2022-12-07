@@ -33,7 +33,7 @@ module.exports = (sequelize) => {
         googleRating: {
             type: DataTypes.INTEGER
         },
-        userRating: {
+        averageRating: {
             type: DataTypes.INTEGER
         },
         cover: {

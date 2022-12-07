@@ -19,10 +19,10 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING
         },
         type: {
-            type: DataTypes.ENUM("oneMonth","sixMonth","oneYear")
+            type: DataTypes.ENUM("oneMonth","sixMonths","oneYear")
         },
         startDate: {
-            type: DataTypes.DATEONLE
+            type: DataTypes.DATEONLY
         },
         finishDate: {
            type: DataTypes.DATEONLY
