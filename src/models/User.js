@@ -25,16 +25,7 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        fullname: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        billingAdress: {
-            type: DataTypes.STRING
-        },
-        country: {
-            type: DataTypes.STRING
-        },
+
         subscribed  : {
             type: DataTypes.BOOLEAN,
             allowNull: false

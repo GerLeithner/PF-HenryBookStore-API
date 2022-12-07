@@ -36,7 +36,7 @@ module.exports = (sequelize) => {
         userRating: {
             type: DataTypes.INTEGER
         },
-        image: {
+        cover: {
             type: DataTypes.STRING
         }
     }, 
