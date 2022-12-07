@@ -7,7 +7,7 @@ const {
   DB_USER, DB_PASSWORD, DB_HOST,
 } = process.env;
 
-const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/book`, {
+const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/books`, {
   logging: false, // set to console.log to see the raw SQL queries
   native: false, // lets Sequelize know we can use pg-native for ~30% more speed
 });
@@ -42,18 +42,18 @@ Author.belongsToMany(Book, { through: "BookXAuthor" });
 Book.belongsToMany(User, { through: "BookXUser", as: "Favourite" });
 User.belongsToMany(Book, { through: "BookXUser", as: "Favourite" });
 
-Book.hasMany(Read);
-Read.belongsTo(Book);
-User.hasMany(Read);
-Read.belongsTo(User);
+// Book.belongsToMany(Read);
+// Read.belongsTo(Book);
+// User.belongsToMany(Read);
+// Read.belongsTo(User);
 
-Book.hasMany(Review);
-Review.belongsTo(Book);
-User.hasMany(Review);
-Review.belongsTo(User);
+// Book.hasMany(Review);
+// Review.belongsTo(Book);
+// User.hasMany(Review);
+// Review.belongsTo(User);
 
-User.hasOne(Subscription);
-Subscription.belongsTo(User);
+// User.hasOne(Subscription);
+// Subscription.belongsTo(User);
 
 
 module.exports = {

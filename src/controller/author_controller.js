@@ -29,6 +29,4 @@ authors = ["Gabriel García Márquez", "Pablo Neruda", "Julio Verne", "Philip K.
 
 
 
-module.exports = {
-    authors
-}
+module.exports = authors

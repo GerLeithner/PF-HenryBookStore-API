@@ -25,11 +25,6 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-
-        subscribed  : {
-            type: DataTypes.BOOLEAN,
-            allowNull: false
-        },
         status: {
             type: DataTypes.BOOLEAN,
             allowNull: false
