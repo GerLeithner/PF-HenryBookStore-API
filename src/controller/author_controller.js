@@ -25,7 +25,7 @@ const CompleteAuthors = [
     } 
 ];
 
-authors = ["Gabriel García Márquez", "Pablo Neruda", "Julio Verne", "Philip K. Dick", "Margaret Atwood", "George Orwell", "Agatha Christie", "Sir Arthur Conan Doyle", "George R. R. Martin","William Shakespeare", "Sylvia Plath"];
+authors = ["Gabriel García Márquez", "Pablo Neruda"]; // "Julio Verne", "Philip K. Dick", "Margaret Atwood", "George Orwell", "Agatha Christie", "Sir Arthur Conan Doyle", "George R. R. Martin","William Shakespeare", "Sylvia Plath"];
 
 
 

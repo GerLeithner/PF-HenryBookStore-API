@@ -19,7 +19,7 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        releasDate: {
+        releaseDate: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
@@ -37,6 +37,9 @@ module.exports = (sequelize) => {
             type: DataTypes.INTEGER
         },
         cover: {
+            type: DataTypes.STRING
+        },
+        industryIdentifier: {
             type: DataTypes.STRING
         }
     }, 
