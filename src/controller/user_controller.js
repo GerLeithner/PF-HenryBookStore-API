@@ -21,9 +21,19 @@ async function getUserById(id) {
   }
 }
 
+async function getAllUsers() {
+  try {
+    return User.findAll({
+      include: [{ Book }, { Review }, { Subscription }, { Read }],
+    });
+  } catch (e) {
+    throw Error(e.message);
+  }
+}
+
 async function editUser(id, userName, email, password, admin) {
   try {
-    let user = await UserFindByPk(id);
+    let user = await User.findByPk(id);
     user.Update({
       userName,
       email,
@@ -37,7 +47,7 @@ async function editUser(id, userName, email, password, admin) {
 
 async function changeUserStatus(id) {
   try {
-    let user = await UserFindByPk(id);
+    let user = await User.findByPk(id);
     if (user.status) {
       user.Update({
         status: false,
@@ -68,4 +78,5 @@ module.exports = {
   editUser,
   deleteUser,
   changeUserStatus,
+  getAllUsers,
 };
