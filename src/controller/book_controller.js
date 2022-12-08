@@ -6,7 +6,7 @@ const  authors = require("../controller/author_controller");
 
 async function getApiBooks() {
     let BooksPromises = authors.map(async author => {
-        let bookPromise = await fetch(`https://www.googleapis.com/books/v1/volumes?q=inauthor:"${author}"keyes&key=${API_KEY}`)
+        let bookPromise = await fetch(`https://www.googleapis.com/books/v1/volumes?q=inauthor:"${author}"keyes`)
         return await bookPromise.json();     
     });
 
