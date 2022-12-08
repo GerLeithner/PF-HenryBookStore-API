@@ -1,15 +1,16 @@
 const fetch = require("node-fetch");
 const { Book, Genre, Author } = require("../db.js");
-const { API_KEY } = process.env;
+// const { API_KEY } = process.env;
 const  authors = require("../controller/author_controller");
 
 
 async function getApiBooks() {
     let BooksPromises = authors.map(async author => {
-        let bookPromise = await fetch(`https://www.googleapis.com/books/v1/volumes?q=inauthor:"${author}"keyes&key=${API_KEY}&maxResults=2`);
+        let bookPromise = await fetch(`https://www.googleapis.com/books/v1/volumes?q=inauthor:"${author}"keyes&maxResults=2`);
         let jsonBook = await bookPromise.json(); 
         console.log(jsonBook);
         return jsonBook.items;    
+
     });
 
     let apiBooks = await Promise.all(BooksPromises);

@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes } = require("sequelize");
 
 // *id
 // *email
@@ -11,28 +11,39 @@ const { DataTypes } = require('sequelize');
 // *admin - booleano (es o no admin)
 
 module.exports = (sequelize) => {
-    sequelize.define("user", {
-        id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            primaryKey: true
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        status: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false
-        },
-        admin: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false
-        }
-    }, 
-    { timestamps: false });
-}
+  sequelize.define(
+    "user",
+    {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      userName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        uniquie: true,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        uniquie: true,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      status: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
+      admin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+    },
+    { timestamps: false }
+  );
+};
