@@ -21,7 +21,7 @@ async function getUserById(id) {
   }
 }
 
-async function editUser(id, userName, email, password, admin, status) {
+async function editUser(id, userName, email, password, admin) {
   try {
     let user = await UserFindByPk(id);
     user.Update({
@@ -29,8 +29,24 @@ async function editUser(id, userName, email, password, admin, status) {
       email,
       password,
       admin,
-      status,
     });
+  } catch (e) {
+    throw Error(e.message);
+  }
+}
+
+async function changeUserStatus(id) {
+  try {
+    let user = await UserFindByPk(id);
+    if (user.status) {
+      user.Update({
+        status: false,
+      });
+    } else {
+      user.Update({
+        status: true,
+      });
+    }
   } catch (e) {
     throw Error(e.message);
   }
@@ -51,4 +67,5 @@ module.exports = {
   getUserById,
   editUser,
   deleteUser,
+  changeUserStatus,
 };

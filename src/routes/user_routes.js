@@ -5,6 +5,7 @@ const {
   getUserById,
   editUser,
   deleteUser,
+  changeUserStatus,
 } = require("../controller/user_controller");
 
 const router = express();
@@ -36,11 +37,24 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.put("/edit", async (req, res) => {
-  const { userName, email, password, status, admin } = req.body;
+router.put("/edit/:id", async (req, res) => {
+  const { id } = req.params;
+  const { userName, email, password, admin } = req.body;
   try {
-    await editUser(userName, email, password, status, admin);
+    await editUser(id, userName, email, password, status, admin);
     res.status(200).send("User updated succesfully");
+  } catch (e) {
+    res.status(400).send(e.message);
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await changeUserStatus(id);
+
+    res.status(200).send("Status changed succesful");
   } catch (e) {
     res.status(400).send(e.message);
   }
