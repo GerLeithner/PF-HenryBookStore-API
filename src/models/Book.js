@@ -9,7 +9,7 @@ const { DataTypes } = require('sequelize');
 // users_rating
 
 module.exports = (sequelize) => {
-    sequelize.define("author", {
+    sequelize.define("book", {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,

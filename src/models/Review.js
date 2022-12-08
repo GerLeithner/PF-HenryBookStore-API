@@ -10,7 +10,7 @@ module.exports = (sequelize) => {
         primaryKey: true,
       },
       comment: {
-        type: DataTypes.TEXT(500),
+        type: DataTypes.STRING(500),
         allowNull: true,
       },
       score: {
