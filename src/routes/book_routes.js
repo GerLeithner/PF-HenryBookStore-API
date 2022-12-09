@@ -11,14 +11,14 @@ router.get("/", async(req, res) => {
 
     if(!name) {
         try {
-            // let dbBooks = await getDbBooks();
-            // if(!dbBooks.length) {
-            //     
-            //     dbBooks = Book.bulkCreate(books); 
-            // }
-            // res.status(200).json(dbBooks);
-            let books = await getApiBooks();
+            let books = await Book.findAll();
+
+            if(!books.length) {
+                books = await getApiBooks();
+            }
+
             res.status(200).json(books);
+
         }
         catch(e) {
             console.log(e);

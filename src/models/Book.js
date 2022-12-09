@@ -19,27 +19,30 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        releaseDate: {
-            type: DataTypes.INTEGER,
-            allowNull: false
+        publishedDate: {
+            type: DataTypes.STRING,
+
         },
         publisher: {
             type: DataTypes.STRING,
-            allowNull: false
+
         },
         description: {
             type: DataTypes.TEXT,
         },
-        googleRating: {
+        pages: {
             type: DataTypes.INTEGER
         },
         averageRating: {
-            type: DataTypes.INTEGER
+            type: DataTypes.DOUBLE 
+        },
+        usersRating: {
+            type: DataTypes.DOUBLE 
         },
         cover: {
             type: DataTypes.STRING
         },
-        industryIdentifier: {
+        identifier: {
             type: DataTypes.STRING
         }
     }, 
