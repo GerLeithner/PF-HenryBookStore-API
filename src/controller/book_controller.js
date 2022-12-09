@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 const { Book } = require("../db.js");
 const { API_KEY } = process.env;
-const  authors = require("../controller/author_controller");
+const  {getAuthor} = require("../controller/author_controller");
 
 
 async function getApiBooks() {
