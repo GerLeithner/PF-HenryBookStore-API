@@ -27,10 +27,9 @@ const CompleteAuthors = [
     } 
 ];
 
-authors = ["Gabriel García Márquez", "Pablo Neruda", "Julio Verne", "Philip K. Dick", "Margaret Atwood", "George Orwell", "Agatha Christie", "Sir Arthur Conan Doyle", "George R. R. Martin","William Shakespeare", "Sylvia Plath"];
+authors = ["Gabriel García Márquez", "Pablo Neruda"] // , "Julio Verne", "Philip K. Dick", "Margaret Atwood", "George Orwell", "Agatha Christie", "Sir Arthur Conan Doyle", "George R. R. Martin","William Shakespeare", "Sylvia Plath"];
 
-async function getAuthor(){
-    
+async function getAuthor(){    
     authors.forEach(e=>{
         Author.findOrCreate({
             where: {name:e}
@@ -40,6 +39,13 @@ async function getAuthor(){
     return authors
 }
 
+async function getAuthorByName(name) {
+    return await Author.findOne({
+        where: { name }
+    })
+}
+
 module.exports = {
-    getAuthor
+    getAuthor,
+    getAuthorByName
 }
