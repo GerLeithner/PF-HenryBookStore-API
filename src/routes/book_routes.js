@@ -1,5 +1,4 @@
 const express = require("express");
-const { Book } = require("../db");
 const { createDbBooks, getDbBooks } = require("../controller/book_controller");
 
 
@@ -11,14 +10,13 @@ router.get("/", async(req, res) => {
 
     if(!name) {
         try {
-            let books = await Book.findAll();
+            let books = await getDbBooks();
 
             if(!books.length) {
                 books = await createDbBooks();
             }
 
             res.status(200).json(books);
-
         }
         catch(e) {
             console.log(e);

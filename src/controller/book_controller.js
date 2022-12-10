@@ -6,6 +6,7 @@ const  { getGenreIdByName } = require("../controller/genre_controller");
 function normalizeApiBook(book) {
     return {
         title: book.subtitle ? `${book.title}, ${book.subtitle}` : book.title,
+        // falta ajustar la fecha a solo el año !
         publishedDate: book.publishedDate ? book.publishedDate : "not specified",
         publisher: book.publisher ? book.publisher : "not specified",
         description: book.description ? book.description : "not specified",
@@ -52,7 +53,6 @@ async function createDbBooks() {
 
     return newBooks;
 }
-
 
 async function getDbBooks() {
     let dbBooks = await Book.findAll({
