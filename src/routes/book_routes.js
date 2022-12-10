@@ -1,6 +1,6 @@
 const express = require("express");
 const { Book } = require("../db");
-const { getApiBooks, getDbBooks } = require("../controller/book_controller");
+const { createDbBooks, getDbBooks } = require("../controller/book_controller");
 
 
 const router = express();
@@ -14,7 +14,7 @@ router.get("/", async(req, res) => {
             let books = await Book.findAll();
 
             if(!books.length) {
-                books = await getApiBooks();
+                books = await createDbBooks();
             }
 
             res.status(200).json(books);
