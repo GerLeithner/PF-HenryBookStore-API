@@ -4,7 +4,6 @@ const { getAuthors } = require("../controller/author_controller");
 const router = express();
 router.use(express.json());
 
-
 router.get("/",async(req,res) =>{
     try {
         let author = await getAuthors();
