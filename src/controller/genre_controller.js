@@ -29,6 +29,13 @@ async function getApiGenre(){
     return genreFinal
 }
 
+async function getGenreByName(name) {
+    return await Genre.findOne({
+        where: { name }
+    })
+}
+
 module.exports = {
-    getApiGenre
+    getApiGenre,
+    getGenreByName
 }
