@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const authors = require("../controller/author_controller");
+const {getAuthor} = require("../controller/author_controller");
 const { Genre } = require("../db")
 
 async function getApiGenre(){
