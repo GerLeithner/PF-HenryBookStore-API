@@ -31,9 +31,7 @@ const CompleteAuthors = [
 let authors = ["Gabriel García Márquez", "Pablo Neruda"] // , "Julio Verne", "Philip K. Dick", "Margaret Atwood", "George Orwell", "Agatha Christie", "Sir Arthur Conan Doyle", "George R. R. Martin","William Shakespeare", "Sylvia Plath"];
 
 // REVISAR: esto me parece que devuelve directamente authors como estaba
-// no se si es correcto esto pues no son de la db... por ende no tienen id
-// entonces no se puede hacer el set desde el book. ah ah pero si se crean en la db
-// osea que luego los puedo buscar y setear, pero igual deberia devolver la entidad con id y todo.
+// no se si es correcto esto pues no son de la db... deberia devolver la entidad con id y todo.
 // async function getAuthors(){   
 //     authors.forEach(author => {
 //         Author.findOrCreate({
@@ -43,17 +41,15 @@ let authors = ["Gabriel García Márquez", "Pablo Neruda"] // , "Julio Verne", "
 
 //     return authors
 // }
-
-function createJsonAuthors() {
-    return authors.map(author => {
-        return { name: author }
+async function getAuthors(){   
+    let authorPromises = authors.map(async author => {
+        let [ dbAuthor, created ] = await Author.findOrCreate({
+            where: { name: author }
+        });
+        return dbAuthor;
     })
-}
-
-async function createDbAuthors(){   
-    let jsonAuthors = createJsonAuthors();
-    let newAuthors = await Author.bulkCreate(jsonAuthors, { ignoreDuplicates: true });
-    return newAuthors;
+    let dbAuthors = await Promise.all(authorPromises);
+    return dbAuthors;
 }
 
 async function getDbAuthors() {
@@ -71,7 +67,7 @@ async function getAuthorIdByName(name) {
 
 module.exports = {
     authors,
-    createDbAuthors,
+    getAuthors,
     getDbAuthors,
     getAuthorIdByName
 }
