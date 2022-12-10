@@ -62,21 +62,10 @@ async function changeUserStatus(id) {
   }
 }
 
-async function deleteUser(id) {
-  try {
-    await User.destroy({
-      where: id,
-    });
-  } catch (e) {
-    throw Error(e.message);
-  }
-}
-
 module.exports = {
   registerUser,
   getUserById,
   editUser,
-  deleteUser,
   changeUserStatus,
   getAllUsers,
 };
