@@ -42,10 +42,11 @@ let authors = ["Gabriel García Márquez", "Pablo Neruda"] // , "Julio Verne", "
 //     return authors
 // }
 async function getAuthors(){   
-    let authorPromises = authors.map( author => {
-        return Author.findOrCreate({
+    let authorPromises = authors.map(async author => {
+        let [ dbAuthor, created ] = await Author.findOrCreate({
             where: { name: author }
-        })
+        });
+        return dbAuthor;
     })
     let dbAuthors = await Promise.all(authorPromises);
     return dbAuthors;
