@@ -29,13 +29,15 @@ async function getApiGenre(){
     return genreFinal
 }
 
-async function getGenreByName(name) {
-    return await Genre.findOne({
+async function getGenreIdByName(name) {
+    let genre = await Genre.findOne({
         where: { name }
-    })
+    });
+    let genreId = genre.id;
+    return genreId;
 }
 
 module.exports = {
     getApiGenre,
-    getGenreByName
+    getGenreIdByName
 }

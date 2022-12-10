@@ -1,4 +1,5 @@
-const { Author } = require("../db")
+const { Author } = require("../db");
+const { getDbBooks } = require("./book_controller");
 
 const CompleteAuthors = [
     {
@@ -27,25 +28,50 @@ const CompleteAuthors = [
     } 
 ];
 
-authors = ["Gabriel García Márquez", "Pablo Neruda"] // , "Julio Verne", "Philip K. Dick", "Margaret Atwood", "George Orwell", "Agatha Christie", "Sir Arthur Conan Doyle", "George R. R. Martin","William Shakespeare", "Sylvia Plath"];
+let authors = ["Gabriel García Márquez", "Pablo Neruda"] // , "Julio Verne", "Philip K. Dick", "Margaret Atwood", "George Orwell", "Agatha Christie", "Sir Arthur Conan Doyle", "George R. R. Martin","William Shakespeare", "Sylvia Plath"];
 
-async function getAuthor(){    
-    authors.forEach(e=>{
-        Author.findOrCreate({
-            where: {name:e}
-        })
+// REVISAR: esto me parece que devuelve directamente authors como estaba
+// no se si es correcto esto pues no son de la db... por ende no tienen id
+// entonces no se puede hacer el set desde el book. ah ah pero si se crean en la db
+// osea que luego los puedo buscar y setear, pero igual deberia devolver la entidad con id y todo.
+// async function getAuthors(){   
+//     authors.forEach(author => {
+//         Author.findOrCreate({
+//             where: { name: author }
+//         })
+//     })
+
+//     return authors
+// }
+
+function createJsonAuthors() {
+    return authors.map(author => {
+        return { name: author }
     })
-
-    return authors
 }
 
-async function getAuthorByName(name) {
-    return await Author.findOne({
+async function createDbAuthors(){   
+    let jsonAuthors = createJsonAuthors();
+    let newAuthors = await Author.bulkCreate(jsonAuthors, { ignoreDuplicates: true });
+    return newAuthors;
+}
+
+async function getDbAuthors() {
+    let dbAuthors = await Author.findAll();
+    return dbAuthors;
+}
+
+async function getAuthorIdByName(name) {
+    let author = await Author.findOne({
         where: { name }
-    })
+    });
+    let authorId = author.id
+    return authorId;
 }
 
 module.exports = {
-    getAuthor,
-    getAuthorByName
+    authors,
+    createDbAuthors,
+    getDbAuthors,
+    getAuthorIdByName
 }
