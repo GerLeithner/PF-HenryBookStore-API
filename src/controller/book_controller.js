@@ -29,6 +29,32 @@ function validateId(id) {
     }
 }
 
+function validatePost({ title, publishedDate, publisher, authorsId, genresId, averageRating }) {
+
+    if(!title) throw new Error("debe ingresar un titulo");
+    if(!publishedDate) throw new Error("debe ingresar una fecha de publicación");
+    if(!publisher) throw new Error("debe ingresar una editorial");
+    if(!authorsId) throw new Error("debe ingresar al menos un autor");
+    if(!genresId) throw new Error("debe ingresar al menos un género");
+
+    var regexName = /^[a-zA-Z\s]+$/;
+    if(!regexName.test(title)){
+        throw new Error("Nombre invalido, no puede contener simbolos, ni numeros");
+    }
+
+    let regexAverageRatin = /^\d+$/;
+    if(averageRating === "") averageRating = null;
+    if(averageRating && !regexAverageRatin.test(averageRating)) {
+        throw new Error("el averageRating debe ser un numero");
+    }
+    if(averageRating < 0 || averageRating > 5) {
+        throw new Error("el healthScore debe estar entre 0 y 5");
+    }
+
+    authorsId.forEach(id => validateId(id));
+    genresId.forEach(id => validateId(id));
+}
+
 function normalizeApiBook(book) {
     return {
         title: book.subtitle ? `${book.title}, ${book.subtitle}` : book.title,
@@ -63,7 +89,8 @@ async function createDbBooks() {
 
     await Book.bulkCreate(books, { ignoreDuplicates: true });
 
-    let setPromises = books.map(async book => { 
+    let setPromises = books.map(async book => {
+
         let dbBook = await Book.findOne({ where: { title: book.title}}); 
 
         let authorsIds = await Promise.all(book.authorsNames.map(author => getAuthorIdByName(author)));
@@ -101,5 +128,6 @@ module.exports = {
     getDbBooks,
     getBooksBytitle,
     getBookById,
-    validateId 
+    validateId,
+    validatePost 
 }
