@@ -1,13 +1,5 @@
 const { DataTypes } = require('sequelize');
 
-// *id
-// *title
-// *release_date 
-// *publisher
-// description  
-// google_rating  
-// users_rating
-
 module.exports = (sequelize) => {
     sequelize.define("book", {
         id: {
