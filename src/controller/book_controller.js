@@ -3,6 +3,58 @@ const { Book, Genre, Author } = require("../db.js");
 const  { authors, getAuthorIdByName } = require("../controller/author_controller");
 const  { getGenreIdByName } = require("../controller/genre_controller");
 
+const include = [
+    {
+        model: Author,
+        attributes: ["id", "name"],
+        through: {
+          raw: true,
+          attributes: [],
+        },
+    },
+    {
+        model: Genre,
+        attributes: ["id", "name"],
+        through: {
+          raw: true,
+          attributes: [],
+        },
+    }
+];
+
+function validateId(id) {
+    const regexId = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
+    if(!regexId.test(id)){
+        throw new Error("Id invalido para la base de datos");
+    }
+}
+
+function validatePost({ title, publishedDate, publisher, authorsId, genresId, averageRating }) {
+
+    if(!title) throw new Error("debe ingresar un titulo");
+    if(!publishedDate) throw new Error("debe ingresar una fecha de publicación");
+    if(!publisher) throw new Error("debe ingresar una editorial");
+    if(!authorsId) throw new Error("debe ingresar al menos un autor");
+    if(!genresId) throw new Error("debe ingresar al menos un género");
+
+    var regexName = /^[a-zA-Z\s]+$/;
+    if(!regexName.test(title)){
+        throw new Error("Nombre invalido, no puede contener simbolos, ni numeros");
+    }
+
+    let regexAverageRatin = /^\d+$/;
+    if(averageRating === "") averageRating = null;
+    if(averageRating && !regexAverageRatin.test(averageRating)) {
+        throw new Error("el averageRating debe ser un numero");
+    }
+    if(averageRating < 0 || averageRating > 5) {
+        throw new Error("el healthScore debe estar entre 0 y 5");
+    }
+
+    authorsId.forEach(id => validateId(id));
+    genresId.forEach(id => validateId(id));
+}
+
 function normalizeApiBook(book) {
     return {
         title: book.subtitle ? `${book.title}, ${book.subtitle}` : book.title,
@@ -31,52 +83,42 @@ async function createDbBooks() {
         let jsonBooks = await bookPromise.json(); 
         return jsonBooks.items;    
     });
-
     let apiBooksXAuthor = await Promise.all(booksPromises);
 
     apiBooksXAuthor.map(arrayBooks => arrayBooks.map(book => books.push(normalizeApiBook(book.volumeInfo))));
 
-    let newBooks = await Book.bulkCreate(books, { ignoreDuplicates: true });
+    await Book.bulkCreate(books, { ignoreDuplicates: true });
 
-    books.forEach(async book => { 
-        let authorsIds = await Promise.all(book.authorsNames.map(author => getAuthorIdByName(author)));
-        console.log(authorsIds); // lega hasta acá
+    let setPromises = books.map(async book => {
 
         let dbBook = await Book.findOne({ where: { title: book.title}}); 
 
-        // FALTA HACER LA RELACION AMEX !
-        await dbBook.setAuthors(authorsIds); 
+        let authorsIds = await Promise.all(book.authorsNames.map(author => getAuthorIdByName(author)));
+        let genresIds = await Promise.all(book.genresNames.map(genre => getGenreIdByName(genre)));
+
+        await dbBook.setAuthors(authorsIds);
+        await dbBook.setGenres(genresIds); 
     });
+    await Promise.all(setPromises);
 
-    newBooks = await getDbBooks(); 
-    console.log(newBooks);
-
-    return newBooks;
+    return await getDbBooks(); 
 }
 
 async function getDbBooks() {
-    let dbBooks = await Book.findAll({
-        include: [
-            // {
-            //     model: Genre,
-            //     atributes: ["name"],
-            //     though: {
-            //         raw: true,
-            //         attributes: []
-            //     }
-            // },
-            {
-                model: Author,
-                atributes: ["name"],
-                though: {
-                    raw: true,
-                    atributes: []
-                }
-            }
-        ]
-    });
+    let books = await Book.findAll({ include });
+    return books;
+}
 
-    return dbBooks;
+async function getBookById(id) {
+    let books = await Book.findByPk(id, { include });
+    return books;
+}
+
+async function getBooksBytitle(title) {
+    console.log(title)
+    let books = await getDbBooks();
+    console.log(books)
+    return books.filter(book => book.title.toLowerCase().includes(title.toLowerCase()));
 }
 
 
@@ -84,4 +126,8 @@ async function getDbBooks() {
 module.exports = {
     createDbBooks,
     getDbBooks,
+    getBooksBytitle,
+    getBookById,
+    validateId,
+    validatePost 
 }

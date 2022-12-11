@@ -39,8 +39,8 @@ Genre.belongsToMany(Book, { through: "BookXGenre" });
 Book.belongsToMany(Author, { through: "BookXAuthor" });
 Author.belongsToMany(Book, { through: "BookXAuthor" });
 
-Book.belongsToMany(User, { through: "BookXUser", as: "Favourite" });
-User.belongsToMany(Book, { through: "BookXUser", as: "Favourite" });
+// Book.belongsToMany(User, { through: "BookXUser", as: "Favourite" });
+// User.belongsToMany(Book, { through: "BookXUser", as: "Favourite" });
 
 // Book.belongsToMany(Read);
 // Read.belongsTo(Book);
