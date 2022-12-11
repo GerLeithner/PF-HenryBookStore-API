@@ -121,6 +121,27 @@ async function getBooksBytitle(title) {
     return books.filter(book => book.title.toLowerCase().includes(title.toLowerCase()));
 }
 
+async function getTrendingsBooks() {
+
+    let books = await getDbBooks();
+    const topTen = [];
+
+    const sortedbyAverageRating = books.sort(function (a,b){
+        if(b.averageRating>a.averageRating){
+          return 1;
+        }
+        if(a.averageRating>b.averageRating){
+          return -1;
+        }
+        return 0;
+    })
+
+    for(let i=0;i<10;i++){
+        topTen.push(sortedbyAverageRating[i])
+    }
+
+    return topTen;
+}
 
 
 module.exports = {
@@ -128,6 +149,7 @@ module.exports = {
     getDbBooks,
     getBooksBytitle,
     getBookById,
+    getTrendingsBooks,
     validateId,
     validatePost 
 }

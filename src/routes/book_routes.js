@@ -4,6 +4,7 @@ createDbBooks,
 getDbBooks,
 getBooksBytitle,
 getBookById,
+getTrendingsBooks,
 validateId,
 validatePost } = require("../controller/book_controller");
 const { Book } = require("../db.js");
@@ -79,6 +80,20 @@ router.get("/", async(req, res) => {
     }
 });
 
+router.get("/trending", async(req, res) => {
+    try {
+        let topTen = await getTrendingsBooks();
+        if(!topTen.length) {
+            throw new Error("Error al ordenar los libros");
+        }
+        res.status(200).json(topTen);
+    }
+    catch(e) {
+        console.log(e);
+        res.status(400).send(e.message);
+    }
+});
+
 router.get("/:id", async(req, res) => {
     let { id } = req.params;
     try {   
@@ -94,6 +109,7 @@ router.get("/:id", async(req, res) => {
         res.status(400).send(e.message);
     }
 });
+
 
 module.exports = router
  
