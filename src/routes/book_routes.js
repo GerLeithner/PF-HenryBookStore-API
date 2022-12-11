@@ -23,6 +23,9 @@ router.get("/", async(req, res) => {
             res.status(400).send(e.message);
         }
     }
+    else {
+        
+    }
 })
 
 
