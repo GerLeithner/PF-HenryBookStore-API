@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const {getAuthor} = require("../controller/author_controller");
+const { authors } = require("../controller/author_controller");
 const { Genre } = require("../db")
 
 async function getApiGenre(){
@@ -20,13 +20,25 @@ async function getApiGenre(){
     setGenre.forEach(e => {
         if(e.length) genreFinal.push(e)
     })
-    genreFinal.forEach(e=>{
-        Genre.findOrCreate({
-            where: {name:e}
-        })
-    })
 
-    return genreFinal
+    // creeria que acá está el mismo problema de que no devuelve las entidades 
+    // de la db. Sino el arreglo
+    // genreFinal.forEach(e=>{
+    //     Genre.findOrCreate({
+    //         where: {name:e}
+    //     })
+    // })
+    // return genreFinal
+  
+    let genrePromises = genreFinal.map(async genre => {
+        let [ dbGenre, created ] = await Genre.findOrCreate({
+            where: { name: genre }
+        });
+        return dbGenre;
+    })
+    let dbGenres = await Promise.all(genrePromises);
+
+    return dbGenres;
 }
 
 async function getGenreIdByName(name) {
