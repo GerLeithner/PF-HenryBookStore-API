@@ -38,18 +38,19 @@ async function createDbBooks() {
 
     let newBooks = await Book.bulkCreate(books, { ignoreDuplicates: true });
 
-    books.forEach(async book => { 
+    let setPromises = books.map(async book => { 
         let authorsIds = await Promise.all(book.authorsNames.map(author => getAuthorIdByName(author)));
-        console.log(authorsIds); // lega hasta acá
+        let genresIds = await Promise.all(book.genresNames.map(genre => getGenreIdByName(genre)));
 
         let dbBook = await Book.findOne({ where: { title: book.title}}); 
 
-        // FALTA HACER LA RELACION AMEX !
-        await dbBook.setAuthors(authorsIds); 
+        await dbBook.setAuthors(authorsIds);
+        await dbBook.setGenres(genresIds); 
     });
 
+    await Promise.all(setPromises);
+
     newBooks = await getDbBooks(); 
-    console.log(newBooks);
 
     return newBooks;
 }
@@ -57,28 +58,27 @@ async function createDbBooks() {
 async function getDbBooks() {
     let dbBooks = await Book.findAll({
         include: [
-            // {
-            //     model: Genre,
-            //     atributes: ["name"],
-            //     though: {
-            //         raw: true,
-            //         attributes: []
-            //     }
-            // },
             {
                 model: Author,
-                atributes: ["name"],
-                though: {
-                    raw: true,
-                    atributes: []
-                }
+                attributes: ["id", "name"],
+                through: {
+                  raw: true,
+                  attributes: [],
+                },
+            },
+            {
+                model: Genre,
+                attributes: ["id", "name"],
+                through: {
+                  raw: true,
+                  attributes: [],
+                },
             }
         ]
     });
 
     return dbBooks;
 }
-
 
 
 module.exports = {
