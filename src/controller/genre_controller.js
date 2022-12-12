@@ -22,7 +22,7 @@ async function getApiGenre(){
     })
 
     // creeria que acá está el mismo problema de que no devuelve las entidades 
-    // de la db. Sino el arreglo
+    // de la db. Sino el arreglo. 
     // genreFinal.forEach(e=>{
     //     Genre.findOrCreate({
     //         where: {name:e}
@@ -31,9 +31,7 @@ async function getApiGenre(){
     // return genreFinal
   
     let genrePromises = genreFinal.map(async genre => {
-        let [ dbGenre, created ] = await Genre.findOrCreate({
-            where: { name: genre }
-        });
+        let dbGenre = await Genre.create({ name: genre });
         return dbGenre;
     })
     let dbGenres = await Promise.all(genrePromises);
