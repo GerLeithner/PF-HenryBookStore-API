@@ -43,8 +43,7 @@ async function getGenreIdByName(name) {
     let genre = await Genre.findOne({
         where: { name }
     });
-    let genreId = genre.id;
-    return genreId;
+    return genre.id;
 }
 
 module.exports = {
