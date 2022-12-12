@@ -28,7 +28,19 @@ const { getDbBooks } = require("./book_controller");
 //     } 
 // ];
 
-let authors = ["Gabriel García Márquez", "Pablo Neruda"] // , "Julio Verne", "Philip K. Dick", "Margaret Atwood", "George Orwell", "Agatha Christie", "Sir Arthur Conan Doyle", "George R. R. Martin","William Shakespeare", "Sylvia Plath"];
+let authors = [
+    "Gabriel Garcia Marquez", 
+    "Pablo Neruda" ] 
+//     "Julio Verne", 
+//     "Philip K. Dick", 
+//     "Margaret Atwood", 
+//     "George Orwell", 
+//     "Agatha Christie", 
+//     "Sir Arthur Conan Doyle", 
+//     "George R. R. Martin",
+//     "William Shakespeare", 
+//     "Sylvia Plath"
+// ];
 
 // REVISAR: esto me parece que devuelve directamente authors como estaba
 // no se si es correcto esto pues no son de la db... deberia devolver la entidad con id y todo.
@@ -44,7 +56,7 @@ let authors = ["Gabriel García Márquez", "Pablo Neruda"] // , "Julio Verne", "
 async function getAuthors(){   
     let authorPromises = authors.map(async author => {
         let [ dbAuthor, created ] = await Author.findOrCreate({
-            where: { name: author }
+            where: { name: author },
         });
         return dbAuthor;
     })
@@ -61,8 +73,7 @@ async function getAuthorIdByName(name) {
     let author = await Author.findOne({
         where: { name }
     });
-    let authorId = author.id
-    return authorId;
+    return author.id;
 }
 
 module.exports = {

@@ -57,13 +57,7 @@ router.get("/", async(req, res) => {
     let books = [];
     try {
         if(!title) {
-            books = await getDbBooks();
-            if(!books.length) {
-                books = await createDbBooks();
-            }
-            if(!books.length) {
-                throw new Error("Error en la creación de los libros");
-            }
+            books = await createDbBooks();
             res.status(200).json(books);
         }
         else {
