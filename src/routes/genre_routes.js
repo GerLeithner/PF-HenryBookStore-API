@@ -7,7 +7,7 @@ router.use(express.json());
 
 router.get("/", async(req,res) => {
    try {
-     
+
     let genre = await getApiGenre();
     res.status(200).json(genre)
 

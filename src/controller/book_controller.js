@@ -1,7 +1,8 @@
 const fetch = require("node-fetch");
 const { Book, Genre, Author } = require("../db.js");
-const  { authors, getAuthorIdByName } = require("../controller/author_controller");
-const  { getGenreIdByName } = require("../controller/genre_controller");
+const { authorsAndGenres } = require("./authors_genres_controller");
+const  { getAuthorIdByName } = require("../controller/author_controller");
+const  { getGenreIdByName } = require("./genre_controller");
 
 
 function validateId(id) {
@@ -37,9 +38,10 @@ function validatePost({ title, publishedDate, publisher, authorsId, genresId, av
     genresId.forEach(id => validateId(id));
 }
 
-function normalizeApiBook(book, author) {
+function normalizeApiBook(book, author, genre) {
     return {
-        title: book.subtitle ? `${book.title}, ${book.subtitle}` : book.title,
+        title: book.title,
+        subtitle: book.subtitle,
         // falta ajustar la fecha a solo el año !
         publishedDate: book.publishedDate ? book.publishedDate : "not specified",
         publisher: book.publisher ? book.publisher : "not specified",
@@ -51,45 +53,46 @@ function normalizeApiBook(book, author) {
         book.industryIdentifiers[0].type === "OTHER" ? 
         book.industryIdentifiers[0].identifier : 
         `ISBN:${book.industryIdentifiers[0].identifier}`,
-        authors: [ author ],// to find de authors ids and set them
-        genres: book.categories ? book.categories : [] // to find de genres ids and set them
+        author,// to find de authors ids and set them
+        genre // to find de genres ids and set them
     }
 }
 
 async function createDbBooks() {
-    let apiBooks = [];
 
-    let booksPromises = authors.map(async author => {
+    let setApiBooks = new Set;
 
-        let bookPromise = await fetch(`https://www.googleapis.com/books/v1/volumes?q=inauthor:"${author}"keyes&maxResults=2`);
-        let jsonBooks = await bookPromise.json(); 
-        return jsonBooks.items.map(item => {
-            return normalizeApiBook(item.volumeInfo, author);
-        });    
+    let booksPromises = authorsAndGenres.map(async data => {
+
+        let bookPromise = await fetch(`https://www.googleapis.com/books/v1/volumes?q=inauthor:"${data.author}"keyes&maxResults=2`);
+        let jsonBooks = await bookPromise.json();
+        if(jsonBooks && jsonBooks.items) {
+            return jsonBooks.items.map(item => {
+                return normalizeApiBook(item.volumeInfo, data.author, data.genre);
+            });
+        } 
     });
     let apiBooksXAuthor = await Promise.all(booksPromises);
+    apiBooksXAuthor.map(arrayBooks => arrayBooks?.map(book => setApiBooks.add(book)));
 
-    apiBooksXAuthor.map(arrayBooks => arrayBooks.map(book => apiBooks.push(book)));
-
-    await Book.bulkCreate(apiBooks);
+    let apiBooks = Array.from(setApiBooks);
+    
+    await Book.bulkCreate(apiBooks, { ignoreDuplicates: true })
 
     let setPromises = apiBooks.map(async apiBook => {
         let dbBook = await Book.findOne({ 
-            where: { title: apiBook.title  },
+            where: 
+            { 
+                title: apiBook.title,
+                identifier: apiBook.identifier
+            },
         });  
         
-        let authorsIds = await Promise.all(apiBook.authors.map(async author => {
-            id = await getAuthorIdByName(author);
-            return id;
-        }));
+        let authorId = await getAuthorIdByName(apiBook.author)
+        let genreId = await getGenreIdByName(apiBook.genre)
 
-        let genresIds = await Promise.all(apiBook.genres.map(async genre => {
-            id = await getGenreIdByName(genre);
-            return id;
-        }));
-
-        authorsIds && await dbBook.setAuthors( authorsIds );
-        authorsIds && await dbBook.setGenres( genresIds );
+        authorId && await dbBook.setAuthor( authorId );
+        genreId && await dbBook.setGenre( genreId );
     })
     
     await Promise.all(setPromises);
@@ -99,27 +102,15 @@ async function createDbBooks() {
 
 async function getDbBooks() {
     let books = await Book.findAll({ 
-        include: [{
-                model: Author,
-                attributes: ["id", "name"],
-                through: {
-                  attributes: [],
-                },
-            },
-            {
-                model: Genre,
-                attributes: ["id", "name"],
-                through: {
-                  attributes: [],
-                },
-            }
-        ]
+        include: [ Author, Genre ] 
     });
     return books;
 }
 
 async function getBookById(id) {
-    let books = await Book.findByPk(id, { include });
+    let books = await Book.findByPk(id, {
+        include: [ Author, Genre ] 
+        });
     return books;
 }
 
@@ -135,17 +126,17 @@ async function getTrendingsBooks() {
     let books = await getDbBooks();
     const topTen = [];
 
-    const sortedbyAverageRating = books.sort(function (a,b){
-        if(b.averageRating>a.averageRating){
+    const sortedbyAverageRating = books.sort(function (a, b) {
+        if(b.averageRating > a.averageRating) {
           return 1;
         }
-        if(a.averageRating>b.averageRating){
+        if(a.averageRating > b.averageRating) {
           return -1;
         }
         return 0;
     })
 
-    for(let i = 0; i < 10;i++){
+    for(let i = 0; i < 10; i++){
         topTen.push(sortedbyAverageRating[i])
     }
 
@@ -162,3 +153,47 @@ module.exports = {
     validateId,
     validatePost 
 }
+
+
+// async function createDbBooks() {
+
+//     let apiBooks = [];
+
+//     let booksPromises = authors.map(async author => {
+
+//         let bookPromise = await fetch(`https://www.googleapis.com/books/v1/volumes?q=inauthor:"${author}"keyes&maxResults=2`);
+//         let jsonBooks = await bookPromise.json(); 
+//         return jsonBooks.items.map(item => {
+//             return normalizeApiBook(item.volumeInfo, author);
+//         });    
+//     });
+//     let apiBooksXAuthor = await Promise.all(booksPromises);
+
+//     apiBooksXAuthor.map(arrayBooks => arrayBooks.map(book => apiBooks.push(book)));
+
+//     await Book.bulkCreate(apiBooks);
+
+//     let setPromises = apiBooks.map(async apiBook => {
+//         let dbBook = await Book.findOne({ 
+//             where: { title: apiBook.title  },
+//         });  
+        
+//         let authorsIds = await Promise.all(apiBook.authors.map(async author => {
+//             id = await getAuthorIdByName(author);
+//             return id;
+//         }));
+
+//         let genresIds = await Promise.all(apiBook.genres.map(async genre => {
+//             id = await getGenreIdByName(genre);
+//             return id;
+//         }));
+
+//         authorsIds && await dbBook.setAuthors( authorsIds );
+//         authorsIds && await dbBook.setGenres( genresIds );
+//     })
+    
+//     await Promise.all(setPromises);
+
+//     return await getDbBooks(); 
+// }
+
