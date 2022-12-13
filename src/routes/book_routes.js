@@ -57,7 +57,12 @@ router.get("/", async(req, res) => {
     let books = [];
     try {
         if(!title) {
-            books = await createDbBooks();
+            books = await getDbBooks();
+
+            if(!books.length) {
+                books = await createDbBooks();
+            }
+            
             res.status(200).json(books);
         }
         else {
