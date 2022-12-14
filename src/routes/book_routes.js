@@ -1,14 +1,14 @@
 const express = require("express");
-const { 
-createDbBooks,
-getDbBooks,
-getBooksBytitle,
-getBookById,
-getTrendingsBooks,
-validateId,
-validatePost } = require("../controller/book_controller");
-const { Book } = require("../db.js");
-
+const {
+  createDbBooks,
+  getDbBooks,
+  getBooksBytitle,
+  getBookById,
+  getTrendingsBooks,
+  validateId,
+  validatePost,
+} = require("../controller/book_controller");
+const { Book, Author } = require("../db.js");
 
 const router = express();
 router.use(express.json());
@@ -30,85 +30,105 @@ router.use(express.json());
 //     "genres": [ "f91199a2-5650-438b-b4ec-ae5872aef461" ]
 // }
 
-router.post("/", async(req, res) => {
-    try {
-        validatePost(req.body);
+router.post("/", async (req, res) => {
+  try {
+    validatePost(req.body);
 
-        let { authorsId, genresId, title } = req.body;
+    let {
+      authorName,
+      genreId,
+      title,
+      publishedDate,
+      publisher,
+      description,
+      pages,
+      averageRating,
+      usersRating,
+      cover,
+      identifier,
+    } = req.body;
 
-        let newBook = await Book.create(req.body);
-        if(!newBook) {
-            throw new Error("no se pudo crear el libro")
-        }
+    console.log("Req. body: ", req.body);
 
-        newBook.setGenres(genresId);
-        newBook.setAuthors(authorsId);
-
-        res.status(200).json(await getBooksBytitle(title));
+    let author = Author.findOrCreate({
+      where: { name: authorName },
+    });
+    let authorId = author.id;
+    let newBook = await Book.create({
+      title,
+      publishedDate,
+      publisher,
+      description,
+      pages,
+      averageRating: parseFloat(averageRating),
+      cover,
+      identifier,
+    });
+    if (!newBook) {
+      throw new Error("no se pudo crear el libro");
     }
-    catch(e) {
-        console.log(e);
-        res.status(400).send(e.message);
-    }
+
+    newBook.setGenre(genreId);
+    newBook.setAuthor(authorId);
+
+    res.status(200).json(await getBooksBytitle(title));
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
 });
 
-router.get("/", async(req, res) => {
-    let { title } = req.query;
-    let books = [];
-    try {
-        if(!title) {
-            books = await getDbBooks();
+router.get("/", async (req, res) => {
+  let { title } = req.query;
+  let books = [];
+  try {
+    if (!title) {
+      books = await getDbBooks();
 
-            if(!books.length) {
-                books = await createDbBooks();
-            }
-            
-            res.status(200).json(books);
-        }
-        else {
-            books = await getBooksBytitle(title);
-            if(!books.length) {
-                throw new Error("No existen libros con ese nombre");
-            }
-            res.status(200).json(books);
-        }
+      if (!books.length) {
+        books = await createDbBooks();
+      }
+
+      res.status(200).json(books);
+    } else {
+      books = await getBooksBytitle(title);
+      if (!books.length) {
+        throw new Error("No existen libros con ese nombre");
+      }
+      res.status(200).json(books);
     }
-    catch(e) {
-        console.log(e);
-        res.status(400).send(e.message);
-    }
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
 });
 
-router.get("/trending", async(req, res) => {
-    try {
-        let topTen = await getTrendingsBooks();
-        if(!topTen.length) {
-            throw new Error("Error al ordenar los libros");
-        }
-        res.status(200).json(topTen);
+router.get("/trending", async (req, res) => {
+  try {
+    let topTen = await getTrendingsBooks();
+    if (!topTen.length) {
+      throw new Error("Error al ordenar los libros");
     }
-    catch(e) {
-        console.log(e);
-        res.status(400).send(e.message);
-    }
+    res.status(200).json(topTen);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
 });
 
-router.get("/:id", async(req, res) => {
-    let { id } = req.params;
-    try {   
-        validateId(id);
-        let book = await getBookById(id);
-        if(!book) {
-            throw new Error("No se ha encontrado el libro")
-        }
-        res.status(200).json(book);
+router.get("/:id", async (req, res) => {
+  let { id } = req.params;
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("No se ha encontrado el libro");
     }
-    catch(e) {
-        console.log(e);
-        res.status(400).send(e.message);
-    }
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
 });
 
-
-module.exports = router
- 
+module.exports = router;
