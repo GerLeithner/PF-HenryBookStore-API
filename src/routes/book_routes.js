@@ -48,11 +48,14 @@ router.post("/", async (req, res) => {
       identifier,
     } = req.body;
 
-    console.log("Req. body: ", req.body);
+    console.log("Req. body: ", authorName);
 
-    let author = Author.findOrCreate({
+    let author = await Author.findOrCreate({
       where: { name: authorName },
+      raw: true,
     });
+
+    console.log(author[0].id);
     let authorId = author.id;
     let newBook = await Book.create({
       title,
@@ -69,11 +72,10 @@ router.post("/", async (req, res) => {
     }
 
     newBook.setGenre(genreId);
-    newBook.setAuthor(authorId);
+    newBook.setAuthor(author[0].id);
 
     res.status(200).json(await getBooksBytitle(title));
   } catch (e) {
-    console.log(e);
     res.status(400).send(e.message);
   }
 });

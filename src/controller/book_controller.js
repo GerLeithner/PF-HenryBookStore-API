@@ -122,9 +122,8 @@ async function getBookById(id) {
 }
 
 async function getBooksBytitle(title) {
-  console.log(title);
   let books = await getDbBooks();
-  console.log(books);
+
   return books.filter((book) =>
     book.title.toLowerCase().includes(title.toLowerCase())
   );
