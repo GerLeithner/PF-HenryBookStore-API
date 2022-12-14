@@ -18,6 +18,7 @@ router.get("/", async (req, res) => {
     if (!name) {
       if (!filledDb) {
         author = await getAuthors();
+        filledDb = true;
       } else {
         author = await getDbAuthors();
       }
