@@ -4,7 +4,6 @@ const {
   registerUser,
   getUserById,
   editUser,
-  deleteUser,
   changeUserStatus,
   getAllUsers,
 } = require("../controller/user_controller");
@@ -69,16 +68,6 @@ router.put("/:id", async (req, res) => {
     await changeUserStatus(id);
 
     res.status(200).send("Status changed succesful");
-  } catch (e) {
-    res.status(400).send(e.message);
-  }
-});
-
-router.delete("/delete/:id", async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    await deleteUser(id);
   } catch (e) {
     res.status(400).send(e.message);
   }

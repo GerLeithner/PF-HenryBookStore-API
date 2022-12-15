@@ -33,10 +33,10 @@ sequelize.models = Object.fromEntries(capsEntries);
 // Para relacionarlos hacemos un destructuring
 const { User, Book, Genre, Author, Review, Subscription } = sequelize.models;
 
-Book.belongsToMany(Genre, { through: "BookXGenre" });
+Book.belongsTo(Genre, { through: "BookXGenre" });
 Genre.belongsToMany(Book, { through: "BookXGenre" });
 
-Book.belongsToMany(Author, { through: "BookXAuthor" });
+Book.belongsTo(Author, { through: "BookXAuthor" });
 Author.belongsToMany(Book, { through: "BookXAuthor" });
 
 // Book.belongsToMany(User, { through: "BookXUser", as: "Favourite" });
