@@ -8,7 +8,7 @@ const {
   validateId,
   validatePost,
 } = require("../controller/book_controller");
-const { Book, Author } = require("../db.js");
+const { Book, Author, Genre } = require("../db.js");
 
 const router = express();
 router.use(express.json());
@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
 
     let {
       authorName,
-      genreId,
+      genreName,
       title,
       publishedDate,
       publisher,
@@ -48,12 +48,17 @@ router.post("/", async (req, res) => {
       identifier,
     } = req.body;
 
-    console.log("Req. body: ", req.body);
+    console.log("Req. body: ", authorName);
 
-    let author = Author.findOrCreate({
+    let author = await Author.findOrCreate({
       where: { name: authorName },
+      raw: true,
     });
-    let authorId = author.id;
+    let genre = await Genre.findOrCreate({
+      where: { name: genreName },
+      raw: true,
+    });
+
     let newBook = await Book.create({
       title,
       publishedDate,
@@ -68,12 +73,11 @@ router.post("/", async (req, res) => {
       throw new Error("no se pudo crear el libro");
     }
 
-    newBook.setGenre(genreId);
-    newBook.setAuthor(authorId);
+    newBook.setGenre(genre[0].id);
+    newBook.setAuthor(author[0].id);
 
     res.status(200).json(await getBooksBytitle(title));
   } catch (e) {
-    console.log(e);
     res.status(400).send(e.message);
   }
 });

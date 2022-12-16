@@ -17,14 +17,14 @@ function validatePost({
   publishedDate,
   publisher,
   authorName,
-  genreId,
+  genreName,
   averageRating,
 }) {
   if (!title) throw new Error("debe ingresar un titulo");
   if (!publishedDate) throw new Error("debe ingresar una fecha de publicación");
   if (!publisher) throw new Error("debe ingresar una editorial");
-  if (!authorName) throw new Error("debe ingresar al menos un autor");
-  if (!genreId) throw new Error("debe ingresar al menos un género");
+  if (!authorName) throw new Error("debe ingresar un autor");
+  if (!genreName) throw new Error("debe ingresar un género");
 
   var regexName = /^[a-zA-Z\s]+$/;
   if (!regexName.test(title)) {
@@ -122,9 +122,8 @@ async function getBookById(id) {
 }
 
 async function getBooksBytitle(title) {
-  console.log(title);
   let books = await getDbBooks();
-  console.log(books);
+
   return books.filter((book) =>
     book.title.toLowerCase().includes(title.toLowerCase())
   );
