@@ -29,10 +29,10 @@ module.exports = (sequelize) => {
         allowNull: false,
         uniquie: true,
       },
-      password: {
+      /*       password: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
+      }, */
       status: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

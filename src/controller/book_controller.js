@@ -73,7 +73,16 @@ async function createDbBooks() {
     );
     let jsonBooks = await bookPromise.json();
     if (jsonBooks && jsonBooks.items) {
-      return jsonBooks.items.map((item) => {
+      let filteredBooks = jsonBooks.items.filter(
+        (item) =>
+          item.volumeInfo.hasOwnProperty("description") &&
+          item.volumeInfo.hasOwnProperty("imageLinks") &&
+          item.volumeInfo.authors.length &&
+          item.volumeInfo.categories &&
+          item.volumeInfo.categories.length
+      );
+
+      return filteredBooks.map((item) => {
         return normalizeApiBook(item.volumeInfo, data.author, data.genre);
       });
     }
