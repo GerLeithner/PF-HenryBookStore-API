@@ -1,10 +1,25 @@
 const { User, Book } = require("../db");
 
-async function registerUser(userName, email, password, admin) {
+async function registerUser(userName, email) {
   try {
-    await User.findOrCreate({
+    const user = await User.findOrCreate({
       where: { email },
-      defaults: { userName, password, admin },
+      defaults: { userName },
+      raw: true,
+    });
+
+    console.log(user[0]);
+
+    return user[0];
+  } catch (e) {
+    throw Error(e.message);
+  }
+}
+
+async function getUserByEmail(email) {
+  try {
+    return await User.findOne({
+      where: { email },
     });
   } catch (e) {
     throw Error(e.message);
@@ -24,7 +39,7 @@ async function getUserById(id) {
 async function getAllUsers() {
   try {
     return User.findAll({
-      include: [{ Book }, { Review }, { Subscription }, { Read }],
+      //include: [{ Book }, { Review }, { Subscription }, { Read }],
     });
   } catch (e) {
     throw Error(e.message);

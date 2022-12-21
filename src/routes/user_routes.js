@@ -40,11 +40,11 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { userName, email, password, admin } = req.body;
+  const { nickname, email } = req.body;
 
   try {
-    await registerUser(userName, email, password, admin);
-    res.status(200).send("Registration succesful");
+    const user = await registerUser(nickname, email);
+    res.status(200).json(user);
   } catch (e) {
     res.status(400).send(e.message);
   }
