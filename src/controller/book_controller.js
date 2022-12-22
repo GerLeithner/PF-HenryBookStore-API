@@ -39,9 +39,6 @@ function validatePost({
   if (averageRating < 0 || averageRating > 5) {
     throw new Error("el healthScore debe estar entre 0 y 5");
   }
-
-  //authorsId.forEach((id) => validateId(id));
-  // genre.forEach((id) => validateId(id));
 }
 
 function normalizeApiBook(book, author, genre) {
@@ -107,8 +104,10 @@ async function createDbBooks() {
     let authorId = await getAuthorIdByName(apiBook.author);
     let genreId = await getGenreIdByName(apiBook.genre);
 
-    authorId && (await dbBook.setAuthor(authorId));
-    genreId && (await dbBook.setGenre(genreId));
+    if (dbBook) {
+      authorId && (await dbBook.setAuthor(authorId));
+      genreId && (await dbBook.setGenre(genreId));
+    }
   });
 
   await Promise.all(setPromises);

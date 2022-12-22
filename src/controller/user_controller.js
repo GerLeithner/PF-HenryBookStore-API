@@ -29,7 +29,7 @@ async function getUserByEmail(email) {
 async function getUserById(id) {
   try {
     return await User.findByPk(id, {
-      include: [{ Book }, { Review }, { Subscription }, { Read }],
+      include: ["Favorites", "Read", "Reading"],
     });
   } catch (e) {
     throw Error(e.message);
