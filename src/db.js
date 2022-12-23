@@ -54,10 +54,10 @@ User.belongsToMany(Book, { as: "Read", through: "BookXRead" });
 Book.belongsToMany(User, { as: "Reading", through: "BookXReading" });
 User.belongsToMany(Book, { as: "Reading", through: "BookXReading" });
 
-/* Book.belongsTo(Review, { through: "BookXReview" });
+Book.hasMany(Review);
 Review.belongsTo(Book, { through: "BookXReview" });
-User.belongsToMany(Review, { through: "BookXReview" });
-Review.belongsTo(User, { through: "BookXReview" }); */
+User.hasMany(Review);
+Review.belongsTo(User, { through: "BookXReview" });
 
 /* User.belongsTo(Subscription, { through: "UserXSuscription" });
 Subscription.belongsTo(User, { through: "UserXSuscription" }); */
