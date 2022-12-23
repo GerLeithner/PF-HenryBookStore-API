@@ -29,10 +29,6 @@ module.exports = (sequelize) => {
         allowNull: false,
         uniquie: true,
       },
-      /*       password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      }, */
       status: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
@@ -42,6 +38,11 @@ module.exports = (sequelize) => {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
+      },
+      firstLogin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
       },
     },
     { timestamps: false }
