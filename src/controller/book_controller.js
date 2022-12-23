@@ -39,9 +39,6 @@ function validatePost({
   if (averageRating < 0 || averageRating > 5) {
     throw new Error("el healthScore debe estar entre 0 y 5");
   }
-
-  //authorsId.forEach((id) => validateId(id));
-  // genre.forEach((id) => validateId(id));
 }
 
 function normalizeApiBook(book, author, genre) {
@@ -49,7 +46,8 @@ function normalizeApiBook(book, author, genre) {
     title: book.title,
     subtitle: book.subtitle,
     // falta ajustar la fecha a solo el año !
-    publishedDate: book.publishedDate ? book.publishedDate : "not specified",
+    publishedDate: book.publishedDate ? (book.publishedDate.includes("-") ? book.publishedDate.split("-")[0] : book.publishedDate)
+    : "not specified",
     publisher: book.publisher ? book.publisher : "not specified",
     description: book.description ? book.description : "not specified",
     pages: book.pageCount ? book.pageCount : null,
@@ -73,7 +71,16 @@ async function createDbBooks() {
     );
     let jsonBooks = await bookPromise.json();
     if (jsonBooks && jsonBooks.items) {
-      return jsonBooks.items.map((item) => {
+      let filteredBooks = jsonBooks.items.filter(
+        (item) =>
+          item.volumeInfo.hasOwnProperty("description") &&
+          item.volumeInfo.hasOwnProperty("imageLinks") &&
+          item.volumeInfo.authors.length &&
+          item.volumeInfo.categories &&
+          item.volumeInfo.categories.length
+      );
+
+      return filteredBooks.map((item) => {
         return normalizeApiBook(item.volumeInfo, data.author, data.genre);
       });
     }
@@ -98,8 +105,10 @@ async function createDbBooks() {
     let authorId = await getAuthorIdByName(apiBook.author);
     let genreId = await getGenreIdByName(apiBook.genre);
 
-    authorId && (await dbBook.setAuthor(authorId));
-    genreId && (await dbBook.setGenre(genreId));
+    if (dbBook) {
+      authorId && (await dbBook.setAuthor(authorId));
+      genreId && (await dbBook.setGenre(genreId));
+    }
   });
 
   await Promise.all(setPromises);

@@ -126,8 +126,110 @@ router.get("/:id", async (req, res) => {
     validateId(id);
     let book = await getBookById(id);
     if (!book) {
-      throw new Error("No se ha encontrado el libro");
+      throw new Error("Book not found");
     }
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.post("/:id/favorite", async (req, res) => {
+  let { id } = req.params;
+  let userId = req.body.id;
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    await book.addFavorites(userId);
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.post("/:id/read", async (req, res) => {
+  let { id } = req.params;
+  let userId = req.body.id;
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    await book.addRead(userId);
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.post("/:id/reading", async (req, res) => {
+  let { id } = req.params;
+  let userId = req.body.id;
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    await book.addReading(userId);
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.delete("/:id/favorite", async (req, res) => {
+  let { id } = req.params;
+  let userId = req.body.id;
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    await book.removeFavorites(userId);
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.delete("/:id/read", async (req, res) => {
+  let { id } = req.params;
+  let userId = req.body.id;
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    await book.removeRead(userId);
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.delete("/:id/reading", async (req, res) => {
+  let { id } = req.params;
+  let userId = req.body.id;
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    await book.removeReading(userId);
     res.status(200).json(book);
   } catch (e) {
     console.log(e);
