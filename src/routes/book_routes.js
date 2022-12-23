@@ -5,6 +5,7 @@ const {
   getBooksBytitle,
   getBookById,
   getTrendingsBooks,
+  getNewBooks,
   validateId,
   validatePost,
 } = require("../controller/book_controller");
@@ -114,6 +115,19 @@ router.get("/trending", async (req, res) => {
       throw new Error("Error al ordenar los libros");
     }
     res.status(200).json(topTen);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.get("/news", async (req, res) => {
+  try {
+    let newsTen = await getNewBooks();
+    if (!newsTen.length) {
+      throw new Error("Error al ordenar los libros");
+    }
+    res.status(200).json(newsTen);
   } catch (e) {
     console.log(e);
     res.status(400).send(e.message);
