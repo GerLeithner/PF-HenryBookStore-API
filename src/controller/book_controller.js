@@ -159,12 +159,34 @@ async function getTrendingsBooks() {
   return topTen;
 }
 
+async function getNewBooks() {
+  let books = await getDbBooks();
+  const newsTen = [];
+
+  const sortedbypublishedDate = books.sort(function (a, b) {
+    if (b.publishedDate > a.publishedDate) {
+      return 1;
+    }
+    if (a.publishedDate > b.publishedDate) {
+      return -1;
+    }
+    return 0;
+  });
+
+  for (let i = 0; i < 10; i++) {
+    newsTen.push(sortedbypublishedDate[i]);
+  }
+
+  return newsTen;
+}
+
 module.exports = {
   createDbBooks,
   getDbBooks,
   getBooksBytitle,
   getBookById,
   getTrendingsBooks,
+  getNewBooks,
   validateId,
   validatePost,
 };
