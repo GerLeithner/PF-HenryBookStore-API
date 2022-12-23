@@ -9,7 +9,8 @@ const {
   validateId,
   validatePost,
 } = require("../controller/book_controller");
-const { Book, Author, Genre } = require("../db.js");
+const { getUserById } = require("../controller/user_controller");
+const { Book, Author, Genre, Review, User } = require("../db.js");
 
 const router = express();
 router.use(express.json());
@@ -245,6 +246,45 @@ router.delete("/:id/reading", async (req, res) => {
     }
     await book.removeReading(userId);
     res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.post("/:id/review", async (req, res) => {
+  let bookId = req.params.id;
+  let { comment, score, userId } = req.body;
+
+  try {
+    validateId(bookId);
+    let book = await getBookById(bookId);
+    let user = await getUserById(userId);
+    let review = await Review.create({
+      comment,
+      score,
+      create_date: new Date(),
+    });
+
+    await review.setUser(userId);
+    await review.setBook(bookId);
+
+    res.status(200).json(review);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.delete("/:id/review", async (req, res) => {
+  let { id } = req.body;
+
+  try {
+    let review = await Review.findByPk(id);
+
+    await review.destroy();
+
+    res.status(200).json(review);
   } catch (e) {
     console.log(e);
     res.status(400).send(e.message);

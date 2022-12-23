@@ -1,4 +1,4 @@
-const { User, Book } = require("../db");
+const { User, Book, Review } = require("../db");
 
 async function registerUser(userName, email) {
   try {
@@ -29,7 +29,7 @@ async function getUserByEmail(email) {
 async function getUserById(id) {
   try {
     return await User.findByPk(id, {
-      include: ["Favorites", "Read", "Reading"],
+      include: ["Favorites", "Read", "Reading", Review],
     });
   } catch (e) {
     throw Error(e.message);

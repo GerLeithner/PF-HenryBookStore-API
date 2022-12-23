@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const { Book, Genre, Author } = require("../db.js");
+const { Book, Genre, Author, Review } = require("../db.js");
 const { authorsAndGenres } = require("./authors_genres_controller");
 const { getAuthorIdByName } = require("../controller/author_controller");
 const { getGenreIdByName } = require("./genre_controller");
@@ -46,8 +46,11 @@ function normalizeApiBook(book, author, genre) {
     title: book.title,
     subtitle: book.subtitle,
     // falta ajustar la fecha a solo el año !
-    publishedDate: book.publishedDate ? (book.publishedDate.includes("-") ? book.publishedDate.split("-")[0] : book.publishedDate)
-    : "not specified",
+    publishedDate: book.publishedDate
+      ? book.publishedDate.includes("-")
+        ? book.publishedDate.split("-")[0]
+        : book.publishedDate
+      : "not specified",
     publisher: book.publisher ? book.publisher : "not specified",
     description: book.description ? book.description : "not specified",
     pages: book.pageCount ? book.pageCount : null,
@@ -125,7 +128,7 @@ async function getDbBooks() {
 
 async function getBookById(id) {
   let books = await Book.findByPk(id, {
-    include: [Author, Genre],
+    include: [Author, Genre, Review],
   });
   return books;
 }
