@@ -46,7 +46,8 @@ function normalizeApiBook(book, author, genre) {
     title: book.title,
     subtitle: book.subtitle,
     // falta ajustar la fecha a solo el año !
-    publishedDate: book.publishedDate ? book.publishedDate : "not specified",
+    publishedDate: book.publishedDate ? (book.publishedDate.includes("-") ? book.publishedDate.split("-")[0] : book.publishedDate)
+    : "not specified",
     publisher: book.publisher ? book.publisher : "not specified",
     description: book.description ? book.description : "not specified",
     pages: book.pageCount ? book.pageCount : null,
