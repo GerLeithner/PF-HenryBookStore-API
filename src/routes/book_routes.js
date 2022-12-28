@@ -50,8 +50,6 @@ router.post("/", async (req, res) => {
       identifier,
     } = req.body;
 
-    console.log("Req. body: ", authorName);
-
     let author = await Author.findOrCreate({
       where: { name: authorName },
       raw: true,
@@ -80,6 +78,66 @@ router.post("/", async (req, res) => {
 
     res.status(200).json(await getBooksBytitle(title));
   } catch (e) {
+    res.status(400).send(e.message);
+  }
+});
+
+router.put("/", async (req, res) => {
+  console.log("entre al .put!!")
+  try {
+    validatePost(req.body);
+
+    let {
+      id,
+      authorName,
+      genreName,
+      title,
+      publishedDate,
+      publisher,
+      description,
+      pages,
+      averageRating,
+      cover,
+      identifier,
+    } = req.body;
+    console.log("id ", id);
+
+    let author = await Author.findOrCreate({
+      where: { name: authorName },
+      raw: true,
+    });
+    console.log("author ", author)
+
+    let genre = await Genre.findOrCreate({
+      where: { name: genreName },
+      raw: true,
+    });
+    console.log("genre ", genre)
+
+    let book = await getBookById(id);
+    console.log("book ", book)
+    
+    if (!book) {
+      throw new Error("no se pudo editar el libro");
+    }
+
+    book.update({
+      title,
+      publishedDate,
+      publisher,
+      description,
+      pages,
+      averageRating : parseFloat(averageRating),
+      cover,
+      identifier,
+    })
+
+    book.setGenre(genre[0].id);
+    book.setAuthor(author[0].id);
+
+    res.status(200).json(await getBooksBytitle(title));
+  } catch (e) {
+    console.log(e);
     res.status(400).send(e.message);
   }
 });
