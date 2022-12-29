@@ -29,7 +29,7 @@ module.exports = (sequelize) => {
         allowNull: false,
         uniquie: true,
       },
-      status: {
+      active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true,

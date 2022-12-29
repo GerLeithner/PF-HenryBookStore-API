@@ -20,6 +20,7 @@ async function getUserByEmail(email) {
   try {
     return await User.findOne({
       where: { email },
+      include: ["Favorites", "Read", "Reading", Review],
     });
   } catch (e) {
     throw Error(e.message);
@@ -39,7 +40,7 @@ async function getUserById(id) {
 async function getAllUsers() {
   try {
     return User.findAll({
-      //include: [{ Book }, { Review }, { Subscription }, { Read }],
+      include: ["Favorites", "Read", "Reading", Review],
     });
   } catch (e) {
     throw Error(e.message);
@@ -49,7 +50,7 @@ async function getAllUsers() {
 async function editUser(id, userName, email, password, admin) {
   try {
     let user = await User.findByPk(id);
-    user.Update({
+    user.update({
       userName,
       email,
       password,
@@ -63,13 +64,13 @@ async function editUser(id, userName, email, password, admin) {
 async function changeUserStatus(id) {
   try {
     let user = await User.findByPk(id);
-    if (user.status) {
-      user.Update({
-        status: false,
+    if (user.active) {
+      user.update({
+        active: false,
       });
     } else {
-      user.Update({
-        status: true,
+      user.update({
+        active: true,
       });
     }
   } catch (e) {
@@ -83,4 +84,5 @@ module.exports = {
   editUser,
   changeUserStatus,
   getAllUsers,
+  getUserByEmail,
 };
