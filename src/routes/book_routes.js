@@ -8,6 +8,7 @@ const {
   getNewBooks,
   validateId,
   validatePost,
+  updateBookUsersRating,
 } = require("../controller/book_controller");
 const { getUserById } = require("../controller/user_controller");
 const { Book, Author, Genre, Review, User } = require("../db.js");
@@ -83,7 +84,7 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/", async (req, res) => {
-  console.log("entre al .put!!")
+  console.log("entre al .put!!");
   try {
     validatePost(req.body);
 
@@ -106,17 +107,17 @@ router.put("/", async (req, res) => {
       where: { name: authorName },
       raw: true,
     });
-    console.log("author ", author)
+    console.log("author ", author);
 
     let genre = await Genre.findOrCreate({
       where: { name: genreName },
       raw: true,
     });
-    console.log("genre ", genre)
+    console.log("genre ", genre);
 
     let book = await getBookById(id);
-    console.log("book ", book)
-    
+    console.log("book ", book);
+
     if (!book) {
       throw new Error("no se pudo editar el libro");
     }
@@ -127,10 +128,10 @@ router.put("/", async (req, res) => {
       publisher,
       description,
       pages,
-      averageRating : parseFloat(averageRating),
+      averageRating: parseFloat(averageRating),
       cover,
       identifier,
-    })
+    });
 
     book.setGenre(genre[0].id);
     book.setAuthor(author[0].id);
@@ -316,8 +317,6 @@ router.post("/:id/review", async (req, res) => {
 
   try {
     validateId(bookId);
-    let book = await getBookById(bookId);
-    let user = await getUserById(userId);
     let review = await Review.create({
       comment,
       score,
@@ -327,6 +326,33 @@ router.post("/:id/review", async (req, res) => {
     await review.setUser(userId);
     await review.setBook(bookId);
 
+    await updateBookUsersRating(bookId);
+
+    res.status(200).json(review);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.put("/:id/review", async (req, res) => {
+  let bookId = req.params.id;
+  let { comment, score, id } = req.body;
+
+  try {
+    validateId(bookId);
+    let review = await Review.findByPk(id);
+
+    console.log("review", review);
+
+    await review.update({
+      comment,
+      score,
+      edit_date: new Date(),
+    });
+
+    await updateBookUsersRating(bookId);
+
     res.status(200).json(review);
   } catch (e) {
     console.log(e);
@@ -335,12 +361,15 @@ router.post("/:id/review", async (req, res) => {
 });
 
 router.delete("/:id/review", async (req, res) => {
+  let bookId = req.params.id;
   let { id } = req.body;
 
   try {
     let review = await Review.findByPk(id);
 
     await review.destroy();
+
+    await updateBookUsersRating(bookId);
 
     res.status(200).json(review);
   } catch (e) {

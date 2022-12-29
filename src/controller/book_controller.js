@@ -80,7 +80,10 @@ async function createDbBooks() {
           item.volumeInfo.hasOwnProperty("imageLinks") &&
           item.volumeInfo.authors.length &&
           item.volumeInfo.categories &&
-          item.volumeInfo.categories.length
+          item.volumeInfo.categories.length &&
+          item.volumeInfo.pageCount &&
+          item.volumeInfo.publishedDate &&
+          item.volumeInfo.averageRating
       );
 
       return filteredBooks.map((item) => {
@@ -121,7 +124,7 @@ async function createDbBooks() {
 
 async function getDbBooks() {
   let books = await Book.findAll({
-    include: [Author, Genre],
+    include: [Author, Genre, Review],
   });
   return books;
 }
@@ -183,6 +186,25 @@ async function getNewBooks() {
   return newsTen;
 }
 
+async function updateBookUsersRating(bookId) {
+  let book = await getBookById(bookId);
+  let usersRating = 0;
+
+  for (let i = 0; i < book.reviews.length; i++) {
+    usersRating = usersRating + book.reviews[i].score;
+
+    if (i === book.reviews.length - 1) {
+      usersRating = Math.round((usersRating / book.reviews.length) * 100) / 100;
+    }
+  }
+
+  console.log("usersRating: ", usersRating);
+
+  await book.update({
+    usersRating,
+  });
+}
+
 module.exports = {
   createDbBooks,
   getDbBooks,
@@ -192,6 +214,7 @@ module.exports = {
   getNewBooks,
   validateId,
   validatePost,
+  updateBookUsersRating,
 };
 
 // async function createDbBooks() {
