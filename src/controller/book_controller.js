@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const { Book, Genre, Author, Review } = require("../db.js");
+const { Book, Genre, Author, Review, User } = require("../db.js");
 const { authorsAndGenres } = require("./authors_genres_controller");
 const { getAuthorIdByName } = require("../controller/author_controller");
 const { getGenreIdByName } = require("./genre_controller");
@@ -124,14 +124,22 @@ async function createDbBooks() {
 
 async function getDbBooks() {
   let books = await Book.findAll({
-    include: [Author, Genre, Review],
+    include: [
+      Author,
+      Genre,
+      { model: Review, include: [{ model: User, attributes: ["userName"] }] },
+    ],
   });
   return books;
 }
 
 async function getBookById(id) {
   let books = await Book.findByPk(id, {
-    include: [Author, Genre, Review],
+    include: [
+      Author,
+      Genre,
+      { model: Review, include: [{ model: User, attributes: ["userName"] }] },
+    ],
   });
   return books;
 }

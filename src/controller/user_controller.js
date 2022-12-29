@@ -20,7 +20,12 @@ async function getUserByEmail(email) {
   try {
     return await User.findOne({
       where: { email },
-      include: ["Favorites", "Read", "Reading", Review],
+      include: [
+        "Favorites",
+        "Read",
+        "Reading",
+        { model: Review, include: [{ model: Book, attributes: ["title"] }] },
+      ],
     });
   } catch (e) {
     throw Error(e.message);
@@ -30,7 +35,12 @@ async function getUserByEmail(email) {
 async function getUserById(id) {
   try {
     return await User.findByPk(id, {
-      include: ["Favorites", "Read", "Reading", Review],
+      include: [
+        "Favorites",
+        "Read",
+        "Reading",
+        { model: Review, include: [{ model: Book, attributes: ["title"] }] },
+      ],
     });
   } catch (e) {
     throw Error(e.message);
@@ -40,7 +50,12 @@ async function getUserById(id) {
 async function getAllUsers() {
   try {
     return User.findAll({
-      include: ["Favorites", "Read", "Reading", Review],
+      include: [
+        "Favorites",
+        "Read",
+        "Reading",
+        { model: Review, include: [{ model: Book, attributes: ["title"] }] },
+      ],
     });
   } catch (e) {
     throw Error(e.message);
