@@ -211,7 +211,7 @@ router.get("/:id", async (req, res) => {
 
 router.post("/:id/favorite", async (req, res) => {
   let { id } = req.params;
-  let userId = req.body.id;
+  const {userId} = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -228,7 +228,7 @@ router.post("/:id/favorite", async (req, res) => {
 
 router.post("/:id/read", async (req, res) => {
   let { id } = req.params;
-  let userId = req.body.id;
+  const {userId} = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -245,7 +245,7 @@ router.post("/:id/read", async (req, res) => {
 
 router.post("/:id/reading", async (req, res) => {
   let { id } = req.params;
-  let userId = req.body.id;
+  const {userId} = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -262,7 +262,7 @@ router.post("/:id/reading", async (req, res) => {
 
 router.delete("/:id/favorite", async (req, res) => {
   let { id } = req.params;
-  let userId = req.body.id;
+  const {userId} = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -279,7 +279,7 @@ router.delete("/:id/favorite", async (req, res) => {
 
 router.delete("/:id/read", async (req, res) => {
   let { id } = req.params;
-  let userId = req.body.id;
+  const {userId} = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -296,7 +296,7 @@ router.delete("/:id/read", async (req, res) => {
 
 router.delete("/:id/reading", async (req, res) => {
   let { id } = req.params;
-  let userId = req.body.id;
+  const {userId} = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
