@@ -11,6 +11,19 @@ const {
 const router = express();
 router.use(express.json());
 
+router.get("/", async (req, res) => {
+  try {
+    const users = await getAllUsers();
+
+    if (!users) throw Error("No users has been found");
+    else {
+      res.status(200).json(users);
+    }
+  } catch (e) {
+    res.status(404).send(e.message);
+  }
+});
+
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -20,19 +33,6 @@ router.get("/:id", async (req, res) => {
     if (!user) throw Error("No user has been found");
     else {
       res.status(200).json(user);
-    }
-  } catch (e) {
-    res.status(404).send(e.message);
-  }
-});
-
-router.get("/", async (req, res) => {
-  try {
-    const users = await getAllUsers();
-
-    if (!users) throw Error("No users has been found");
-    else {
-      res.status(200).json(users);
     }
   } catch (e) {
     res.status(404).send(e.message);

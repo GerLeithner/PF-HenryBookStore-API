@@ -32,6 +32,25 @@ router.use(express.json());
 //     "authors": [ "5a491c43-463a-4435-9fa6-bd85112525b3" ],
 //     "genres": [ "f91199a2-5650-438b-b4ec-ae5872aef461" ]
 // }
+router.delete("/:id", async (req, res) => {
+  let { id } = req.params;
+
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    book.update({
+      active: !book.active
+    });
+
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+})
 
 router.post("/", async (req, res) => {
   try {
