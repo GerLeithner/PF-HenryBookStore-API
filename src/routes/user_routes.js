@@ -54,7 +54,7 @@ router.put("/edit/:id", async (req, res) => {
   const { id } = req.params;
   const { userName, email, password, admin } = req.body;
   try {
-    await editUser(id, userName, email, password, status, admin);
+    await editUser(id, userName, email, password, admin);
     res.status(200).send("User updated succesfully");
   } catch (e) {
     res.status(400).send(e.message);
