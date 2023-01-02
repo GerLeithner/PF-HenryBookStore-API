@@ -5,10 +5,13 @@ async function registerUser(userName, email) {
     const user = await User.findOrCreate({
       where: { email },
       defaults: { userName },
-      raw: true,
+      include: [
+        "Favorites",
+        "Read",
+        "Reading",
+        { model: Review, include: [{ model: Book, attributes: ["title"] }] },
+      ],
     });
-
-    console.log(user[0]);
 
     return user[0];
   } catch (e) {

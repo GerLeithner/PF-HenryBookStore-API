@@ -42,7 +42,7 @@ router.delete("/:id", async (req, res) => {
       throw new Error("Book not found");
     }
     book.update({
-      active: !book.active
+      active: !book.active,
     });
 
     res.status(200).json(book);
@@ -50,7 +50,7 @@ router.delete("/:id", async (req, res) => {
     console.log(e);
     res.status(400).send(e.message);
   }
-})
+});
 
 router.post("/", async (req, res) => {
   try {
@@ -230,7 +230,7 @@ router.get("/:id", async (req, res) => {
 
 router.post("/:id/favorite", async (req, res) => {
   let { id } = req.params;
-  const {userId} = req.body;
+  const { userId } = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -247,7 +247,7 @@ router.post("/:id/favorite", async (req, res) => {
 
 router.post("/:id/read", async (req, res) => {
   let { id } = req.params;
-  const {userId} = req.body;
+  const { userId } = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -264,7 +264,7 @@ router.post("/:id/read", async (req, res) => {
 
 router.post("/:id/reading", async (req, res) => {
   let { id } = req.params;
-  const {userId} = req.body.userId;
+  const { userId } = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -281,8 +281,9 @@ router.post("/:id/reading", async (req, res) => {
 
 router.delete("/:id/favorite", async (req, res) => {
   let { id } = req.params;
-  const {userId} = req.body.userId;
+  const { userId } = req.body;
 
+  console.log("userId:", userId);
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -299,7 +300,7 @@ router.delete("/:id/favorite", async (req, res) => {
 
 router.delete("/:id/read", async (req, res) => {
   let { id } = req.params;
-  const {userId} = req.body.userId;
+  const { userId } = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -316,7 +317,7 @@ router.delete("/:id/read", async (req, res) => {
 
 router.delete("/:id/reading", async (req, res) => {
   let { id } = req.params;
-  const {userId} = req.body.userId;
+  const { userId } = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
