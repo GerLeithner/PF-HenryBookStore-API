@@ -264,7 +264,7 @@ router.post("/:id/read", async (req, res) => {
 
 router.post("/:id/reading", async (req, res) => {
   let { id } = req.params;
-  const {userId} = req.body.userId;
+  const {userId} = req.body;
   try {
     validateId(id);
     let book = await getBookById(id);
