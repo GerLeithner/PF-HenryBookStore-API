@@ -12,6 +12,7 @@ const {
 } = require("../controller/book_controller");
 const { getUserById } = require("../controller/user_controller");
 const { Book, Author, Genre, Review, User } = require("../db.js");
+const transporter = require("../config/mailer");
 
 const router = express();
 router.use(express.json());
@@ -234,44 +235,19 @@ router.post("/:id/favorite", async (req, res) => {
   try {
     validateId(id);
     let book = await getBookById(id);
+    let user = await getUserById(userId);
     if (!book) {
       throw new Error("Book not found");
     }
     await book.addFavorites(userId);
-    res.status(200).json(book);
-  } catch (e) {
-    console.log(e);
-    res.status(400).send(e.message);
-  }
-});
 
-router.post("/:id/read", async (req, res) => {
-  let { id } = req.params;
-  const { userId } = req.body;
-  try {
-    validateId(id);
-    let book = await getBookById(id);
-    if (!book) {
-      throw new Error("Book not found");
-    }
-    await book.addRead(userId);
-    res.status(200).json(book);
-  } catch (e) {
-    console.log(e);
-    res.status(400).send(e.message);
-  }
-});
+    await transporter.sendMail({
+      from: '"Henry Books 👻" <henrybookexplorer@gmail.com>', // sender address
+      to: user.email, // list of receivers
+      subject: `${book.title} favorited`, // Subject line
+      html: `<b>Hi, ${user.userName}! ${book.title} has been added to your favorites</b>`, // html body
+    });
 
-router.post("/:id/reading", async (req, res) => {
-  let { id } = req.params;
-  const { userId } = req.body;
-  try {
-    validateId(id);
-    let book = await getBookById(id);
-    if (!book) {
-      throw new Error("Book not found");
-    }
-    await book.addReading(userId);
     res.status(200).json(book);
   } catch (e) {
     console.log(e);
@@ -291,6 +267,30 @@ router.delete("/:id/favorite", async (req, res) => {
       throw new Error("Book not found");
     }
     await book.removeFavorites(userId);
+
+    await transporter.sendMail({
+      from: '"Henry Books 👻" <henrybookexplorer@gmail.com>', // sender address
+      to: user.email, // list of receivers
+      subject: `${book.title} removed from favorites`, // Subject line
+      html: `<b>Hi, ${user.userName}! ${book.title} has been removed from your favorites</b>`, // html body
+    });
+
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+router.post("/:id/read", async (req, res) => {
+  let { id } = req.params;
+  const { userId } = req.body;
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    await book.addRead(userId);
     res.status(200).json(book);
   } catch (e) {
     console.log(e);
@@ -308,6 +308,23 @@ router.delete("/:id/read", async (req, res) => {
       throw new Error("Book not found");
     }
     await book.removeRead(userId);
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.post("/:id/reading", async (req, res) => {
+  let { id } = req.params;
+  const { userId } = req.body;
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    await book.addReading(userId);
     res.status(200).json(book);
   } catch (e) {
     console.log(e);
