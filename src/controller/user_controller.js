@@ -1,4 +1,5 @@
 const { User, Book, Review } = require("../db");
+const { transporter } = require("../config/mailer");
 
 async function registerUser(userName, email) {
   try {
