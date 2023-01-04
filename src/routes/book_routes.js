@@ -257,7 +257,7 @@ router.post("/:id/favorite", async (req, res) => {
 
 router.delete("/:id/favorite", async (req, res) => {
   let { id } = req.params;
-  const { userId } = req.body;
+  const  {userId}  = req.body.userId;
 
   console.log("userId:", userId);
   try {
@@ -300,7 +300,7 @@ router.post("/:id/read", async (req, res) => {
 
 router.delete("/:id/read", async (req, res) => {
   let { id } = req.params;
-  const { userId } = req.body;
+  const { userId } = req.body.userId;
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -334,7 +334,10 @@ router.post("/:id/reading", async (req, res) => {
 
 router.delete("/:id/reading", async (req, res) => {
   let { id } = req.params;
-  const { userId } = req.body;
+  const { userId } = req.body.userId;
+
+  console.log("BOOKID:::::::::::::::::",id)
+  console.log("USERID:::::::::::::::::",userId)
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -352,7 +355,8 @@ router.delete("/:id/reading", async (req, res) => {
 router.post("/:id/review", async (req, res) => {
   let bookId = req.params.id;
   let { comment, score, userId } = req.body;
-
+console.log("BOOKID",bookId)
+console.log("USERID",userId)
   try {
     validateId(bookId);
     let review = await Review.create({
