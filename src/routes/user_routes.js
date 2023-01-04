@@ -52,9 +52,9 @@ router.post("/register", async (req, res) => {
 
 router.put("/edit/:id", async (req, res) => {
   const { id } = req.params;
-  const { userName, email, password, admin } = req.body;
+  const { userName, email, password, admin, profilePic } = req.body;
   try {
-    await editUser(id, userName, email, password, admin);
+    await editUser(id, userName, email, password, admin, profilePic);
     res.status(200).send("User updated succesfully");
   } catch (e) {
     res.status(400).send(e.message);
