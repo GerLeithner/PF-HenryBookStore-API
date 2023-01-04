@@ -29,6 +29,9 @@ module.exports = (sequelize) => {
         allowNull: false,
         uniquie: true,
       },
+      profilePic: {
+        type: DataTypes.STRING
+      },
       active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
@@ -43,6 +46,10 @@ module.exports = (sequelize) => {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true,
+      },
+      notifications: {
+        type: DataTypes.JSON,
+        defaultValue: { all: false, expDate: false, newBooks: false}
       },
     },
     { timestamps: false }

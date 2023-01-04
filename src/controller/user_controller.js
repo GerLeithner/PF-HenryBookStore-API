@@ -65,7 +65,7 @@ async function getAllUsers() {
   }
 }
 
-async function editUser(id, userName, email, password, admin) {
+async function editUser(id, userName, email, password, admin, profilePic) {
   try {
     let user = await User.findByPk(id);
     user.update({
@@ -73,6 +73,7 @@ async function editUser(id, userName, email, password, admin) {
       email,
       password,
       admin,
+      profilePic
     });
   } catch (e) {
     throw Error(e.message);
