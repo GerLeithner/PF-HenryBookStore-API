@@ -66,7 +66,7 @@ async function getAllUsers() {
   }
 }
 
-async function editUser(id, userName, email, password, admin, profilePic) {
+async function editUser(id, userName, email, password, admin, profilePic, notifications) {
   try {
     let user = await User.findByPk(id);
     user.update({
