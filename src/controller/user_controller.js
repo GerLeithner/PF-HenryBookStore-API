@@ -74,7 +74,8 @@ async function editUser(id, userName, email, password, admin, profilePic) {
       email,
       password,
       admin,
-      profilePic
+      profilePic,
+      notifications
     });
   } catch (e) {
     throw Error(e.message);
