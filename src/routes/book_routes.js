@@ -97,6 +97,13 @@ router.post("/", async (req, res) => {
     newBook.setGenre(genre[0].id);
     newBook.setAuthor(author[0].id);
 
+    await transporter.sendMail({
+      from: '"Henry Books 👻" <henrybookexplorer@gmail.com>', // sender address
+      to: user.email, // list of receivers
+      subject: `${newBook.title} created`, // Subject line
+      html: `<b>Hi, ${user.userName}! ${book.title} has been added to the catalogue</b>`, // html body
+    });
+
     res.status(200).json(await getBooksBytitle(title));
   } catch (e) {
     res.status(400).send(e.message);
@@ -241,13 +248,6 @@ router.post("/:id/favorite", async (req, res) => {
     }
     await book.addFavorites(userId);
 
-    await transporter.sendMail({
-      from: '"Henry Books 👻" <henrybookexplorer@gmail.com>', // sender address
-      to: user.email, // list of receivers
-      subject: `${book.title} favorited`, // Subject line
-      html: `<b>Hi, ${user.userName}! ${book.title} has been added to your favorites</b>`, // html body
-    });
-
     res.status(200).json(book);
   } catch (e) {
     console.log(e);
@@ -257,7 +257,7 @@ router.post("/:id/favorite", async (req, res) => {
 
 router.delete("/:id/favorite", async (req, res) => {
   let { id } = req.params;
-  const  {userId}  = req.body.userId;
+  const { userId } = req.body.userId;
 
   console.log("userId:", userId);
   try {
@@ -336,8 +336,8 @@ router.delete("/:id/reading", async (req, res) => {
   let { id } = req.params;
   const { userId } = req.body.userId;
 
-  console.log("BOOKID:::::::::::::::::",id)
-  console.log("USERID:::::::::::::::::",userId)
+  console.log("BOOKID:::::::::::::::::", id);
+  console.log("USERID:::::::::::::::::", userId);
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -355,8 +355,8 @@ router.delete("/:id/reading", async (req, res) => {
 router.post("/:id/review", async (req, res) => {
   let bookId = req.params.id;
   let { comment, score, userId } = req.body;
-console.log("BOOKID",bookId)
-console.log("USERID",userId)
+  console.log("BOOKID", bookId);
+  console.log("USERID", userId);
   try {
     validateId(bookId);
     let review = await Review.create({

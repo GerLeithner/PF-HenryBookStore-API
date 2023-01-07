@@ -1,4 +1,4 @@
-const { User, Book, Review } = require("../db");
+const { User, Book, Review, Subscription } = require("../db");
 const { transporter } = require("../config/mailer");
 
 async function registerUser(userName, email) {
@@ -43,6 +43,7 @@ async function getUserById(id) {
         "Favorites",
         "Read",
         "Reading",
+        Subscription,
         { model: Review, include: [{ model: Book, attributes: ["title"] }] },
       ],
     });
@@ -66,7 +67,15 @@ async function getAllUsers() {
   }
 }
 
-async function editUser(id, userName, email, password, admin, profilePic, notifications) {
+async function editUser(
+  id,
+  userName,
+  email,
+  password,
+  admin,
+  profilePic,
+  notifications
+) {
   try {
     let user = await User.findByPk(id);
     user.update({
@@ -75,7 +84,7 @@ async function editUser(id, userName, email, password, admin, profilePic, notifi
       password,
       admin,
       profilePic,
-      notifications
+      notifications,
     });
   } catch (e) {
     throw Error(e.message);
@@ -99,6 +108,41 @@ async function changeUserStatus(id) {
   }
 }
 
+async function activateSubscription(id, plan) {
+  let finishDate;
+
+  switch (plan) {
+    case "One month":
+      finishDate = new Date().setMonth(Date.getMonth() + 1);
+      break;
+    case "Six months":
+      finishDate = new Date().setMonth(Date.getMonth() + 6);
+      break;
+    case "One year":
+      finishDate = new Date().setMonth(Date.getMonth() + 12);
+      break;
+    default:
+      break;
+  }
+
+  const subscription = {
+    type: plan,
+    startDate: new Date(),
+    finishDate,
+  };
+  try {
+    let user = await User.findByPk(id);
+    if (user.subscription) {
+      await user.subscription.update(subscription);
+    } else {
+      let newSubscription = await Subscription.create(subscription);
+      user.setSubscription(newSubscription);
+    }
+  } catch (e) {
+    throw Error(e.message);
+  }
+}
+
 module.exports = {
   registerUser,
   getUserById,
@@ -106,4 +150,5 @@ module.exports = {
   changeUserStatus,
   getAllUsers,
   getUserByEmail,
+  activateSubscription,
 };
