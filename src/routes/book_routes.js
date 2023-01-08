@@ -33,6 +33,7 @@ router.use(express.json());
 //     "authors": [ "5a491c43-463a-4435-9fa6-bd85112525b3" ],
 //     "genres": [ "f91199a2-5650-438b-b4ec-ae5872aef461" ]
 // }
+
 router.delete("/:id", async (req, res) => {
   let { id } = req.params;
 
@@ -111,7 +112,6 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/", async (req, res) => {
-  console.log("entre al .put!!");
   try {
     validatePost(req.body);
 
