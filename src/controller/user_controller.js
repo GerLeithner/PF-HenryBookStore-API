@@ -69,6 +69,16 @@ async function getAllUsers() {
 async function editUser(id, userName, email, password, admin, profilePic, notifications) {
   try {
     let user = await User.findByPk(id);
+
+    if(notifications) {
+      if(notifications.expDate && notifications.newBooks) {
+        notifications.all = true;
+      }
+      if(!notifications.expDate && !notifications.newBooks) {
+        notifications.all = false;
+      }
+    }
+
     user.update({
       userName,
       email,
