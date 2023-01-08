@@ -1,5 +1,6 @@
 const { User, Book, Review, Subscription } = require("../db");
-const { transporter } = require("../config/mailer");
+const transporter = require("../config/mailer");
+const { DataTypes } = require("sequelize");
 
 async function registerUser(userName, email) {
   try {
@@ -82,11 +83,11 @@ async function editUser(
   try {
     let user = await User.findByPk(id);
 
-    if(notifications) {
-      if(notifications.expDate && notifications.newBooks) {
+    if (notifications) {
+      if (notifications.expDate && notifications.newBooks) {
         notifications.all = true;
       }
-      if(!notifications.expDate && !notifications.newBooks) {
+      if (!notifications.expDate && !notifications.newBooks) {
         notifications.all = false;
       }
     }
@@ -129,7 +130,7 @@ async function activateSubscription(id, plan) {
 
   switch (plan) {
     case "One month":
-      finishDate = currentDate.setMonth(currentDate.getMonth() + 1);
+      finishDate = new Date();
       break;
     case "Six months":
       finishDate = currentDate.setMonth(currentDate.getMonth() + 6);
@@ -166,6 +167,28 @@ async function activateSubscription(id, plan) {
   }
 }
 
+async function checkUsersSubscriptions() {
+  let users = await getAllUsers();
+  let currentDate = new Date().toISOString().split("T")[0];
+
+  try {
+    users.forEach(async (user) => {
+      if (user.subscription && currentDate > user.subscription.finishDate) {
+        let subscription = await Subscription.findByPk(user.subscription.id);
+        subscription.destroy();
+        await transporter.sendMail({
+          from: '"Henry Books 👻" <henrybookexplorer@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: `Subscription Expired`, // Subject line
+          html: `<b>Hi, ${user.userName}! Your subscription has expired. Please renew the subscription to continue reading our books</b>`, // html body
+        });
+      }
+    });
+  } catch (e) {
+    throw Error(e);
+  }
+}
+
 module.exports = {
   registerUser,
   getUserById,
@@ -174,4 +197,5 @@ module.exports = {
   getAllUsers,
   getUserByEmail,
   activateSubscription,
+  checkUsersSubscriptions,
 };
