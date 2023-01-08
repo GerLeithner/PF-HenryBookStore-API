@@ -30,7 +30,7 @@ module.exports = (sequelize) => {
         uniquie: true,
       },
       profilePic: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
       },
       active: {
         type: DataTypes.BOOLEAN,
@@ -49,7 +49,11 @@ module.exports = (sequelize) => {
       },
       notifications: {
         type: DataTypes.JSON,
-        defaultValue: { all: false, expDate: false, newBooks: false}
+        defaultValue: { all: false, expDate: false, newBooks: false },
+      },
+      googleUser: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
       },
     },
     { timestamps: false }

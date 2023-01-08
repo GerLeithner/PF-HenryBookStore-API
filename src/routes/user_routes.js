@@ -41,19 +41,19 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { nickname, email } = req.body;
+  const { nickname, email, googleUser } = req.body;
 
   try {
-    const user = await registerUser(nickname, email);
+    const user = await registerUser(nickname, email, googleUser);
     res.status(200).json(user);
   } catch (e) {
     res.status(400).send(e.message);
   }
 });
 
-
 router.put("/edit", async (req, res) => {
-  const { id, userName, email, password, admin, profilePic, notifications } = req.body;
+  const { id, userName, email, password, admin, profilePic, notifications } =
+    req.body;
 
   try {
     await editUser(

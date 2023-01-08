@@ -2,11 +2,11 @@ const { User, Book, Review, Subscription } = require("../db");
 const transporter = require("../config/mailer");
 const { DataTypes } = require("sequelize");
 
-async function registerUser(userName, email) {
+async function registerUser(userName, email, googleUser) {
   try {
     const user = await User.findOrCreate({
       where: { email },
-      defaults: { userName },
+      defaults: { userName, googleUser },
       include: [
         "Favorites",
         "Read",
@@ -130,7 +130,7 @@ async function activateSubscription(id, plan) {
 
   switch (plan) {
     case "One month":
-      finishDate = new Date();
+      finishDate = currentDate.setMonth(currentDate.getMonth() + 1);
       break;
     case "Six months":
       finishDate = currentDate.setMonth(currentDate.getMonth() + 6);
