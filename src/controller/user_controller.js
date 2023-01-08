@@ -1,4 +1,4 @@
-const { User, Book, Review } = require("../db");
+const { User, Book, Review, Subscription } = require("../db");
 const { transporter } = require("../config/mailer");
 
 async function registerUser(userName, email) {
@@ -10,6 +10,7 @@ async function registerUser(userName, email) {
         "Favorites",
         "Read",
         "Reading",
+        Subscription,
         { model: Review, include: [{ model: Book, attributes: ["title"] }] },
       ],
     });
@@ -28,6 +29,7 @@ async function getUserByEmail(email) {
         "Favorites",
         "Read",
         "Reading",
+        Subscription,
         { model: Review, include: [{ model: Book, attributes: ["title"] }] },
       ],
     });
@@ -43,6 +45,7 @@ async function getUserById(id) {
         "Favorites",
         "Read",
         "Reading",
+        Subscription,
         { model: Review, include: [{ model: Book, attributes: ["title"] }] },
       ],
     });
@@ -58,6 +61,7 @@ async function getAllUsers() {
         "Favorites",
         "Read",
         "Reading",
+        Subscription,
         { model: Review, include: [{ model: Book, attributes: ["title"] }] },
       ],
     });
@@ -66,7 +70,15 @@ async function getAllUsers() {
   }
 }
 
-async function editUser(id, userName, email, password, admin, profilePic, notifications) {
+async function editUser(
+  id,
+  userName,
+  email,
+  password,
+  admin,
+  profilePic,
+  notifications
+) {
   try {
     let user = await User.findByPk(id);
     user.update({
@@ -75,7 +87,7 @@ async function editUser(id, userName, email, password, admin, profilePic, notifi
       password,
       admin,
       profilePic,
-      notifications
+      notifications,
     });
   } catch (e) {
     throw Error(e.message);
@@ -99,6 +111,51 @@ async function changeUserStatus(id) {
   }
 }
 
+async function activateSubscription(id, plan) {
+  let finishDate;
+  let currentDate = new Date();
+
+  console.log("plan:", plan);
+
+  switch (plan) {
+    case "One month":
+      finishDate = currentDate.setMonth(currentDate.getMonth() + 1);
+      break;
+    case "Six months":
+      finishDate = currentDate.setMonth(currentDate.getMonth() + 6);
+      break;
+    case "One year":
+      finishDate = currentDate.setMonth(currentDate.getMonth() + 12);
+      break;
+    default:
+      break;
+  }
+
+  console.log(
+    "Función de mes: ",
+    currentDate.setMonth(currentDate.getMonth() + 1)
+  );
+  console.log("finishDate: ", finishDate);
+
+  const subscription = {
+    plan,
+    startDate: new Date(),
+    finishDate,
+  };
+  try {
+    let user = await User.findByPk(id);
+    if (user.subscription) {
+      await user.subscription.update(subscription);
+    } else {
+      let newSubscription = await Subscription.create(subscription);
+      user.setSubscription(newSubscription.id);
+    }
+  } catch (e) {
+    console.log(e);
+    throw Error(e.message);
+  }
+}
+
 module.exports = {
   registerUser,
   getUserById,
@@ -106,4 +163,5 @@ module.exports = {
   changeUserStatus,
   getAllUsers,
   getUserByEmail,
+  activateSubscription,
 };

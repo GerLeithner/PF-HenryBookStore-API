@@ -68,8 +68,8 @@ Review.belongsTo(Book, { through: "BookXReview" });
 User.hasMany(Review);
 Review.belongsTo(User, { through: "BookXReview" });
 
-/* User.belongsTo(Subscription, { through: "UserXSuscription" });
-Subscription.belongsTo(User, { through: "UserXSuscription" }); */
+User.hasOne(Subscription, { through: "UserXSuscription" });
+Subscription.belongsTo(User, { through: "UserXSuscription" });
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');

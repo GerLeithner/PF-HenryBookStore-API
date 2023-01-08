@@ -9,23 +9,12 @@ module.exports = (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      fullname: {
+      plan: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
-      billingAdress: {
-        type: DataTypes.STRING,
-      },
-      country: {
-        type: DataTypes.STRING,
-      },
-      type: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: "male",
         validate: {
           customValidator: (value) => {
-            const enums = ["oneMonth", "sixMonths", "oneYear"];
+            const enums = ["One month", "Six months", "One year"];
             if (!enums.includes(value)) {
               throw new Error("not a valid option");
             }
@@ -40,7 +29,7 @@ module.exports = (sequelize) => {
       },
       active: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false,
+        defaultValue: true,
       },
     },
     { timestamps: false }
