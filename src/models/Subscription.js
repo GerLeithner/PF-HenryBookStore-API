@@ -9,10 +9,9 @@ module.exports = (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      type: {
+      plan: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: "male",
         validate: {
           customValidator: (value) => {
             const enums = ["One month", "Six months", "One year"];
@@ -30,7 +29,7 @@ module.exports = (sequelize) => {
       },
       active: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false,
+        defaultValue: true,
       },
     },
     { timestamps: false }

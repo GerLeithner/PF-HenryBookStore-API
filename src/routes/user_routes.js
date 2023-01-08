@@ -74,11 +74,14 @@ router.put("/edit/:id", async (req, res) => {
 router.put("/subscription/:id", async (req, res) => {
   const { id } = req.params;
   const { plan } = req.body;
+
+  console.log("Body: ", req.body);
   try {
     console.log("Entré al put de subscripcion");
     await activateSubscription(id, plan);
     res.status(200).send("Subscription activated succesfully");
   } catch (e) {
+    console.log(e);
     res.status(400).send(e.message);
   }
 });

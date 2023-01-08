@@ -10,6 +10,7 @@ async function registerUser(userName, email) {
         "Favorites",
         "Read",
         "Reading",
+        Subscription,
         { model: Review, include: [{ model: Book, attributes: ["title"] }] },
       ],
     });
@@ -28,6 +29,7 @@ async function getUserByEmail(email) {
         "Favorites",
         "Read",
         "Reading",
+        Subscription,
         { model: Review, include: [{ model: Book, attributes: ["title"] }] },
       ],
     });
@@ -59,6 +61,7 @@ async function getAllUsers() {
         "Favorites",
         "Read",
         "Reading",
+        Subscription,
         { model: Review, include: [{ model: Book, attributes: ["title"] }] },
       ],
     });
@@ -110,23 +113,32 @@ async function changeUserStatus(id) {
 
 async function activateSubscription(id, plan) {
   let finishDate;
+  let currentDate = new Date();
+
+  console.log("plan:", plan);
 
   switch (plan) {
     case "One month":
-      finishDate = new Date().setMonth(Date.getMonth() + 1);
+      finishDate = currentDate.setMonth(currentDate.getMonth() + 1);
       break;
     case "Six months":
-      finishDate = new Date().setMonth(Date.getMonth() + 6);
+      finishDate = currentDate.setMonth(currentDate.getMonth() + 6);
       break;
     case "One year":
-      finishDate = new Date().setMonth(Date.getMonth() + 12);
+      finishDate = currentDate.setMonth(currentDate.getMonth() + 12);
       break;
     default:
       break;
   }
 
+  console.log(
+    "Función de mes: ",
+    currentDate.setMonth(currentDate.getMonth() + 1)
+  );
+  console.log("finishDate: ", finishDate);
+
   const subscription = {
-    type: plan,
+    plan,
     startDate: new Date(),
     finishDate,
   };
@@ -136,9 +148,10 @@ async function activateSubscription(id, plan) {
       await user.subscription.update(subscription);
     } else {
       let newSubscription = await Subscription.create(subscription);
-      user.setSubscription(newSubscription);
+      user.setSubscription(newSubscription.id);
     }
   } catch (e) {
+    console.log(e);
     throw Error(e.message);
   }
 }
