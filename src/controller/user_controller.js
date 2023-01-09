@@ -130,7 +130,7 @@ async function activateSubscription(id, plan) {
 
   switch (plan) {
     case "One month":
-      finishDate = new Date();
+      finishDate = currentDate.setMonth(currentDate.getMonth() + 1);
       break;
     case "Six months":
       finishDate = currentDate.setMonth(currentDate.getMonth() + 6);
