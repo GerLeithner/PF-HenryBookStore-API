@@ -52,7 +52,7 @@ router.post("/register", async (req, res) => {
 });
 
 router.put("/edit", async (req, res) => {
-  const { id, userName, email, password, admin, profilePic, notifications } =
+  const { id, userName, email, password, admin, profilePic, notifications, active, banned } =
     req.body;
 
   try {
@@ -63,7 +63,9 @@ router.put("/edit", async (req, res) => {
       password,
       admin,
       profilePic,
-      notifications
+      notifications,
+      active,
+      banned
     );
     res.status(200).send("User updated succesfully");
   } catch (e) {

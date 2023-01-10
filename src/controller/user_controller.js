@@ -78,7 +78,9 @@ async function editUser(
   password,
   admin,
   profilePic,
-  notifications
+  notifications,
+  active,
+  banned
 ) {
   try {
     let user = await User.findByPk(id);
@@ -99,6 +101,8 @@ async function editUser(
       admin,
       profilePic,
       notifications,
+      active,
+      banned
     });
   } catch (e) {
     throw Error(e.message);
