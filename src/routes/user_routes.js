@@ -6,6 +6,7 @@ const {
   editUser,
   changeUserStatus,
   getAllUsers,
+  activateSubscription,
 } = require("../controller/user_controller");
 
 const router = express();
@@ -40,23 +41,60 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { nickname, email } = req.body;
+  const { nickname, email, googleUser } = req.body;
 
   try {
-    const user = await registerUser(nickname, email);
+    const user = await registerUser(nickname, email, googleUser);
     res.status(200).json(user);
   } catch (e) {
+    console.log(e);
     res.status(400).send(e.message);
   }
 });
 
-router.put("/edit/:id", async (req, res) => {
-  const { id } = req.params;
-  const { userName, email, password, admin, profilePic, notifications } = req.body;
+router.put("/edit", async (req, res) => {
+  const {
+    id,
+    userName,
+    email,
+    password,
+    admin,
+    profilePic,
+    notifications,
+    active,
+    banned,
+  } = req.body;
+
   try {
-    await editUser(id, userName, email, password, admin, profilePic, notifications);
+    await editUser(
+      id,
+      userName,
+      email,
+      password,
+      admin,
+      profilePic,
+      notifications,
+      active,
+      banned
+    );
     res.status(200).send("User updated succesfully");
   } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.put("/subscription/:id", async (req, res) => {
+  const { id } = req.params;
+  const { plan } = req.body;
+
+  console.log("Body: ", req.body);
+  try {
+    console.log("Entré al put de subscripcion");
+    await activateSubscription(id, plan);
+    res.status(200).send("Subscription activated succesfully");
+  } catch (e) {
+    console.log(e);
     res.status(400).send(e.message);
   }
 });

@@ -12,6 +12,7 @@ const {
 } = require("../controller/book_controller");
 const { getUserById } = require("../controller/user_controller");
 const { Book, Author, Genre, Review, User } = require("../db.js");
+const transporter = require("../config/mailer");
 
 const router = express();
 router.use(express.json());
@@ -32,6 +33,7 @@ router.use(express.json());
 //     "authors": [ "5a491c43-463a-4435-9fa6-bd85112525b3" ],
 //     "genres": [ "f91199a2-5650-438b-b4ec-ae5872aef461" ]
 // }
+
 router.delete("/:id", async (req, res) => {
   let { id } = req.params;
 
@@ -96,14 +98,27 @@ router.post("/", async (req, res) => {
     newBook.setGenre(genre[0].id);
     newBook.setAuthor(author[0].id);
 
+    let users = await User.findAll();
+
+    users.forEach(async (user) => {
+      if (user.notifications.newBooks) {
+        await transporter.sendMail({
+          from: '"Henry Books " <henrybookexplorer@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: `${newBook.title} has been added to the cataloghe`, // Subject line
+          html: `<b>Hi, ${user.userName}!<p> ${book.title} has been added to the catalogue</p></b>`, // html body
+        });
+      }
+    });
+
     res.status(200).json(await getBooksBytitle(title));
   } catch (e) {
+    console.log(e);
     res.status(400).send(e.message);
   }
 });
 
 router.put("/", async (req, res) => {
-  console.log("entre al .put!!");
   try {
     validatePost(req.body);
 
@@ -120,7 +135,6 @@ router.put("/", async (req, res) => {
       cover,
       identifier,
     } = req.body;
-    console.log("id ", id);
 
     let author = await Author.findOrCreate({
       where: { name: authorName },
@@ -234,10 +248,12 @@ router.post("/:id/favorite", async (req, res) => {
   try {
     validateId(id);
     let book = await getBookById(id);
+
     if (!book) {
       throw new Error("Book not found");
     }
     await book.addFavorites(userId);
+
     res.status(200).json(book);
   } catch (e) {
     console.log(e);
@@ -245,6 +261,26 @@ router.post("/:id/favorite", async (req, res) => {
   }
 });
 
+router.delete("/:id/favorite", async (req, res) => {
+  let { id } = req.params;
+  const { userId } = req.body.userId;
+
+  console.log("userId:", userId);
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    await book.removeFavorites(userId);
+
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
 router.post("/:id/read", async (req, res) => {
   let { id } = req.params;
   const { userId } = req.body;
@@ -255,6 +291,23 @@ router.post("/:id/read", async (req, res) => {
       throw new Error("Book not found");
     }
     await book.addRead(userId);
+    res.status(200).json(book);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send(e.message);
+  }
+});
+
+router.delete("/:id/read", async (req, res) => {
+  let { id } = req.params;
+  const { userId } = req.body.userId;
+  try {
+    validateId(id);
+    let book = await getBookById(id);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    await book.removeRead(userId);
     res.status(200).json(book);
   } catch (e) {
     console.log(e);
@@ -279,45 +332,12 @@ router.post("/:id/reading", async (req, res) => {
   }
 });
 
-router.delete("/:id/favorite", async (req, res) => {
-  let { id } = req.params;
-  const { userId } = req.body;
-
-  console.log("userId:", userId);
-  try {
-    validateId(id);
-    let book = await getBookById(id);
-    if (!book) {
-      throw new Error("Book not found");
-    }
-    await book.removeFavorites(userId);
-    res.status(200).json(book);
-  } catch (e) {
-    console.log(e);
-    res.status(400).send(e.message);
-  }
-});
-
-router.delete("/:id/read", async (req, res) => {
-  let { id } = req.params;
-  const { userId } = req.body;
-  try {
-    validateId(id);
-    let book = await getBookById(id);
-    if (!book) {
-      throw new Error("Book not found");
-    }
-    await book.removeRead(userId);
-    res.status(200).json(book);
-  } catch (e) {
-    console.log(e);
-    res.status(400).send(e.message);
-  }
-});
-
 router.delete("/:id/reading", async (req, res) => {
   let { id } = req.params;
-  const { userId } = req.body;
+  const { userId } = req.body.userId;
+
+  console.log("BOOKID:::::::::::::::::", id);
+  console.log("USERID:::::::::::::::::", userId);
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -335,7 +355,8 @@ router.delete("/:id/reading", async (req, res) => {
 router.post("/:id/review", async (req, res) => {
   let bookId = req.params.id;
   let { comment, score, userId } = req.body;
-
+  console.log("BOOKID", bookId);
+  console.log("USERID", userId);
   try {
     validateId(bookId);
     let review = await Review.create({
