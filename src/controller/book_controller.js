@@ -3,6 +3,7 @@ const { Book, Genre, Author, Review, User } = require("../db.js");
 const { authorsAndGenres } = require("./authors_genres_controller");
 const { getAuthorIdByName } = require("../controller/author_controller");
 const { getGenreIdByName } = require("./genre_controller");
+const { Op } = require("sequelize");
 
 function validateId(id) {
   const regexId =
@@ -33,9 +34,7 @@ function validatePost({
 
   let regexAverageRatin = /^\d+$/;
   if (averageRating === "") averageRating = null;
-  if (averageRating && !regexAverageRatin.test(averageRating)) {
-    throw new Error("el averageRating debe ser un numero");
-  }
+
   if (averageRating < 0 || averageRating > 5) {
     throw new Error("el healthScore debe estar entre 0 y 5");
   }
@@ -147,8 +146,10 @@ async function getBookById(id) {
 async function getBooksBytitle(title) {
   let books = await getDbBooks();
 
-  return books.filter((book) =>
-    book.title.toLowerCase().includes(title.toLowerCase())
+  return books.filter(
+    (book) =>
+      book.title.toLowerCase().includes(title.toLowerCase()) ||
+      book.author.name.toLowerCase().includes(title.toLowerCase())
   );
 }
 

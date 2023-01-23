@@ -30,12 +30,19 @@ module.exports = (sequelize) => {
         uniquie: true,
       },
       profilePic: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue:
+          "https://firebasestorage.googleapis.com/v0/b/henry-book-explorer.appspot.com/o/image?alt=media&token=3dccc098-e2c1-48ab-9539-ce0024b12996",
       },
       active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true,
+      },
+      banned: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       admin: {
         type: DataTypes.BOOLEAN,
@@ -49,7 +56,11 @@ module.exports = (sequelize) => {
       },
       notifications: {
         type: DataTypes.JSON,
-        defaultValue: { all: false, expDate: false, newBooks: false}
+        defaultValue: { all: true, expDate: true, newBooks: true },
+      },
+      googleUser: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
       },
     },
     { timestamps: false }
