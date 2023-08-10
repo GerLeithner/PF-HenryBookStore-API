@@ -180,13 +180,12 @@ router.get("/", async (req, res) => {
   let { title } = req.query;
   let books = [];
   try {
+    if (!books.length) {
+      books = await createDbBooks();
+    }
+
     if (!title) {
       books = await getDbBooks();
-
-      if (!books.length) {
-        books = await createDbBooks();
-      }
-
       res.status(200).json(books);
     } else {
       books = await getBooksBytitle(title);
