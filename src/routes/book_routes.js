@@ -180,13 +180,12 @@ router.get("/", async (req, res) => {
   let { title } = req.query;
   let books = [];
   try {
+    if (!books.length) {
+      books = await createDbBooks();
+    }
+
     if (!title) {
       books = await getDbBooks();
-
-      if (!books.length) {
-        books = await createDbBooks();
-      }
-
       res.status(200).json(books);
     } else {
       books = await getBooksBytitle(title);
@@ -263,7 +262,6 @@ router.post("/:id/favorite", async (req, res) => {
 
 router.delete("/:id/favorite", async (req, res) => {
   let { id } = req.params;
-  
   const { userId } = req.body.userId;
 
   console.log("userId:", userId);
@@ -337,6 +335,8 @@ router.delete("/:id/reading", async (req, res) => {
   let { id } = req.params;
   const { userId } = req.body.userId;
 
+  console.log("BOOKID:::::::::::::::::", id);
+  console.log("USERID:::::::::::::::::", userId);
   try {
     validateId(id);
     let book = await getBookById(id);
@@ -354,7 +354,8 @@ router.delete("/:id/reading", async (req, res) => {
 router.post("/:id/review", async (req, res) => {
   let bookId = req.params.id;
   let { comment, score, userId } = req.body;
-
+  console.log("BOOKID", bookId);
+  console.log("USERID", userId);
   try {
     validateId(bookId);
     let review = await Review.create({
@@ -400,12 +401,14 @@ router.put("/:id/review", async (req, res) => {
   }
 });
 
-router.delete("/:id/review", async (req, res) => {
+router.delete("/:id/review/:reviewId", async (req, res) => {
   let bookId = req.params.id;
-  let { id } = req.body;
+  let reviewId = req.params.reviewId;
+
+  console.log("Req.body: ", req.params);
 
   try {
-    let review = await Review.findByPk(id);
+    let review = await Review.findByPk(reviewId);
 
     await review.destroy();
 
