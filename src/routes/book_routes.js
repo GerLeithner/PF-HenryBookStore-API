@@ -401,12 +401,14 @@ router.put("/:id/review", async (req, res) => {
   }
 });
 
-router.delete("/:id/review", async (req, res) => {
+router.delete("/:id/review/:reviewId", async (req, res) => {
   let bookId = req.params.id;
-  let { id } = req.body;
+  let reviewId = req.params.reviewId;
+
+  console.log("Req.body: ", req.params);
 
   try {
-    let review = await Review.findByPk(id);
+    let review = await Review.findByPk(reviewId);
 
     await review.destroy();
 
