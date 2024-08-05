@@ -38,6 +38,8 @@ server.use((err, req, res, next) => {
   res.status(status).send(message);
 });
 
+checkUsersSubscriptions();
+
 schedule.scheduleJob("0 0 * * *", () => checkUsersSubscriptions());
 
 module.exports = server;
