@@ -4,6 +4,11 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const routes = require("./routes/index.js");
 const { checkUsersSubscriptions } = require("./controller/user_controller");
+
+//importar el modulo de cors
+const express = require('express');
+const cors = require('cors');
+
 require("./db.js");
 
 const schedule = require("node-schedule");
@@ -11,6 +16,13 @@ const schedule = require("node-schedule");
 const server = express();
 
 server.name = "API";
+
+//configurar el uso de cors
+const corsOptions = {
+  origin: 'novel-wave-back-jv2x7te81-ger-leithners-projects.vercel.app',
+  optionsSuccessStatus: 200,
+};
+server.use(cors(corsOptions));
 
 server.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 server.use(bodyParser.json({ limit: "50mb" }));
