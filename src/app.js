@@ -19,7 +19,7 @@ server.name = "API";
 
 //configurar el uso de cors
 const corsOptions = {
-  origin: 'novel-wave-back-jv2x7te81-ger-leithners-projects.vercel.app',
+  origin: 'https://novel-wave-back-5arqj4o1n-ger-leithners-projects.vercel.app',
   optionsSuccessStatus: 200,
 };
 server.use(cors(corsOptions));
