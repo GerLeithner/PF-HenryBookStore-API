@@ -1,15 +1,16 @@
+const express = require('express');
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const routes = require("./routes/index.js");
 const { checkUsersSubscriptions } = require("./controller/user_controller");
-const { DEPLOYED_BACK_URL } = process.env;
+require("./db.js");
 
 //importar el modulo de cors
-const express = require('express');
 const cors = require('cors');
+const { AXIOS_URL } = process.env;
 
-require("./db.js");
+
 
 const schedule = require("node-schedule");
 
@@ -17,9 +18,9 @@ const server = express();
 
 server.name = "API";
 
-//configurar el uso de cors
+// configurar el uso de cors
 const corsOptions = {
-  origin: DEPLOYED_BACK_URL,
+  origin: AXIOS_URL,
   optionsSuccessStatus: 200,
 };
 server.use(cors(corsOptions));
