@@ -1,9 +1,9 @@
-const express = require("express");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const routes = require("./routes/index.js");
 const { checkUsersSubscriptions } = require("./controller/user_controller");
+const { DEPLOYED_BACK_URL } = process.env;
 
 //importar el modulo de cors
 const express = require('express');
@@ -19,7 +19,7 @@ server.name = "API";
 
 //configurar el uso de cors
 const corsOptions = {
-  origin: 'https://novel-wave-back-5arqj4o1n-ger-leithners-projects.vercel.app',
+  origin: DEPLOYED_BACK_URL,
   optionsSuccessStatus: 200,
 };
 server.use(cors(corsOptions));
