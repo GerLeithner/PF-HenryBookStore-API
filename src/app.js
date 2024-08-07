@@ -19,7 +19,10 @@ const server = express();
 server.name = "API";
 
 server.use(cors({
-  origin: "http://localhost:3000"
+  origin: '*',
+  methods: '*',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 
 server.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
