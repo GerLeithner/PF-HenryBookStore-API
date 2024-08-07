@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
@@ -6,11 +6,24 @@ const routes = require("./routes/index.js");
 const { checkUsersSubscriptions } = require("./controller/user_controller");
 require("./db.js");
 
+//importar el modulo de cors
+const cors = require('cors');
+// const { AXIOS_URL } = process.env;
+
+
+
 const schedule = require("node-schedule");
 
 const server = express();
 
 server.name = "API";
+
+server.use(cors({
+  origin: '*',
+  methods: '*',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}));
 
 server.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 server.use(bodyParser.json({ limit: "50mb" }));
@@ -37,6 +50,8 @@ server.use((err, req, res, next) => {
   console.error(err);
   res.status(status).send(message);
 });
+
+checkUsersSubscriptions();
 
 schedule.scheduleJob("0 0 * * *", () => checkUsersSubscriptions());
 

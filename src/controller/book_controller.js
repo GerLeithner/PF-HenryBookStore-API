@@ -1,5 +1,6 @@
 const fetch = require("node-fetch");
 const { Book, Genre, Author, Review, User } = require("../db.js");
+const { API_KEY } = process.env;
 const { authorsAndGenres } = require("./authors_genres_controller");
 const { getAuthorIdByName } = require("../controller/author_controller");
 const { getGenreIdByName } = require("./genre_controller");
@@ -69,7 +70,7 @@ async function createDbBooks() {
 
   let booksPromises = authorsAndGenres.map(async (data) => {
     let bookPromise = await fetch(
-      `https://www.googleapis.com/books/v1/volumes?q=inauthor:"${data.author}"keyes&maxResults=2`
+      `https://www.googleapis.com/books/v1/volumes?q=inauthor:"${data.author}"keyes&maxResults=10&key=${API_KEY}`
     );
     let jsonBooks = await bookPromise.json();
     if (jsonBooks && jsonBooks.items) {
@@ -77,7 +78,7 @@ async function createDbBooks() {
         (item) =>
           item.volumeInfo.hasOwnProperty("description") &&
           item.volumeInfo.hasOwnProperty("imageLinks") &&
-          item.volumeInfo.authors.length &&
+          item.volumeInfo.authors?.length &&
           item.volumeInfo.categories &&
           item.volumeInfo.categories.length &&
           item.volumeInfo.pageCount &&
